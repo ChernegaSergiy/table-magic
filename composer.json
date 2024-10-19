@@ -1,4 +1,4 @@
-﻿{
+{
     "name": "chernegasergiy/table-magic",
     "description": "A PHP library for creating and manipulating tables in a console output format.",
     "type": "library",
@@ -7,12 +7,12 @@
     },
     "autoload": {
         "psr-4": {
-            "ChernegaSergiy\\TableMagic\\": "src/"
+            "ChernegaSergiy\TableMagic\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Tests\\": "tests/"
+            "Tests\": "tests/"
         }
     },
     "minimum-stability": "stable",
