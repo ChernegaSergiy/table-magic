@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 namespace ChernegaSergiy\TableMagic;
 
@@ -40,7 +40,8 @@ class TableMagic
     public function getTable() : string
     {
         $table = $this->drawLine();
-        $table .= '|' . implode('|', array_map(fn ($header, $i) => ' ' . $this->mbStrPad($header, $this->colWidths[$i], ' ', STR_PAD_BOTH) . ' ', $this->headers, array_keys($this->headers))) . "|\n";
+        $table .= '|' . implode('|', array_map(fn ($header, $i) => ' ' . $this->mbStrPad($header, $this->colWidths[$i], ' ', STR_PAD_BOTH) . ' ', $this->headers, array_keys($this->headers))) . "|
+";
         $table .= $this->drawLine();
 
         foreach ($this->rows as $row) {
@@ -49,7 +50,8 @@ class TableMagic
                 $padType = 'r' == $align ? STR_PAD_LEFT : ('c' == $align ? STR_PAD_BOTH : STR_PAD_RIGHT);
 
                 return ' ' . $this->mbStrPad((string) $value, $this->colWidths[$i], ' ', $padType) . ' ';
-            }, $row, array_keys($row))) . "|\n";
+            }, $row, array_keys($row))) . "|
+";
         }
 
         $table .= $this->drawLine();
@@ -129,7 +131,8 @@ class TableMagic
 
     protected function drawLine() : string
     {
-        return '+' . implode('+', array_map(fn ($width) => str_repeat('-', $width + 2), $this->colWidths)) . "+\n";
+        return '+' . implode('+', array_map(fn ($width) => str_repeat('-', $width + 2), $this->colWidths)) . "+
+";
     }
 
     protected function mbStrPad(string $input, int $padLength, string $padString = ' ', int $padType = STR_PAD_RIGHT) : string
