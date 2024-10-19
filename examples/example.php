@@ -1,6 +1,6 @@
 ﻿<?php
 
-require_once __DIR__ . '/../vendor/autoload.php'; // Include Composer autoload
+require_once __DIR__ . '/../../../autoload.php'; // Include Composer autoload
 
 use ChernegaSergiy\TableMagic\TableMagic;
 
