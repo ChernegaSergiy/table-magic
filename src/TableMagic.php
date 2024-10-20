@@ -28,8 +28,33 @@ class TableMagic
      */
     public function addRow(array $row) : void
     {
+        $row = array_pad($row, count($this->headers), '');
         $this->rows[] = $row;
         $this->updateColWidths($row);
+    }
+
+    /**
+     * Adds a new column to the table.
+     *
+     * @param  string  $header  The header for the new column.
+     * @param  array  $values  The values for the new column.
+     * @param  string  $alignment  The alignment for the new column ('l', 'r', or 'c').
+     */
+    public function addColumn(string $header, array $values, string $alignment = 'l') : void
+    {
+        $newColumnIndex = count($this->headers);
+        $this->headers[] = $header;
+        $this->setAlignment($header, $alignment);
+
+        $newColumnWidth = mb_strwidth($header, 'UTF-8');
+        foreach ($values as $value) {
+            $newColumnWidth = max($newColumnWidth, mb_strwidth((string) $value, 'UTF-8'));
+        }
+        $this->colWidths[$newColumnIndex] = $newColumnWidth;
+
+        foreach ($this->rows as $index => &$row) {
+            $row[] = $values[$index] ?? '';
+        }
     }
 
     /**
@@ -39,24 +64,32 @@ class TableMagic
      */
     public function getTable() : string
     {
+        if (empty($this->headers)) {
+            return 'Empty table';
+        }
+
         $table = $this->drawLine();
-        $table .= '|' . implode('|', array_map(fn ($header, $i) => ' ' . $this->mbStrPad($header, $this->colWidths[$i], ' ', STR_PAD_BOTH) . ' ', $this->headers, array_keys($this->headers))) . "|
-";
+        $table .= $this->formatRow($this->headers, STR_PAD_BOTH);
         $table .= $this->drawLine();
 
         foreach ($this->rows as $row) {
-            $table .= '|' . implode('|', array_map(function ($value, $i) {
-                $align = $this->alignments[$i];
-                $padType = 'r' == $align ? STR_PAD_LEFT : ('c' == $align ? STR_PAD_BOTH : STR_PAD_RIGHT);
-
-                return ' ' . $this->mbStrPad((string) $value, $this->colWidths[$i], ' ', $padType) . ' ';
-            }, $row, array_keys($row))) . "|
-";
+            $table .= $this->formatRow($row);
         }
 
         $table .= $this->drawLine();
 
         return $table;
+    }
+
+    protected function formatRow(array $row, int $padType = STR_PAD_RIGHT) : string
+    {
+        return '|' . implode('|', array_map(function ($value, $i) use ($padType) {
+            $align = $this->alignments[$i] ?? 'l';
+            $padType = 'r' == $align ? STR_PAD_LEFT : ('c' == $align ? STR_PAD_BOTH : $padType);
+
+            return ' ' . $this->mbStrPad((string) $value, $this->colWidths[$i], ' ', $padType) . ' ';
+        }, $row, array_keys($this->headers))) . '|
+';
     }
 
     /**
@@ -114,7 +147,7 @@ class TableMagic
         $index = array_search($column, $this->headers);
 
         if (false === $index) {
-            throw new Exception("Column '$column' not found.");
+            $index = count($this->headers) - 1;
         }
 
         $alignment = strtolower($alignment);
@@ -131,8 +164,8 @@ class TableMagic
 
     protected function drawLine() : string
     {
-        return '+' . implode('+', array_map(fn ($width) => str_repeat('-', $width + 2), $this->colWidths)) . "+
-";
+        return '+' . implode('+', array_map(fn ($width) => str_repeat('-', $width + 2), $this->colWidths)) . '+
+';
     }
 
     protected function mbStrPad(string $input, int $padLength, string $padString = ' ', int $padType = STR_PAD_RIGHT) : string
