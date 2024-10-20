@@ -28,7 +28,8 @@ class TableMagic
      */
     public function addRow(array $row) : void
     {
-        $row = array_pad($row, count($this->headers), '');
+        $headerCount = count($this->headers);
+        $row = array_pad(array_slice($row, 0, $headerCount), $headerCount, '');
         $this->rows[] = $row;
         $this->updateColWidths($row);
     }
