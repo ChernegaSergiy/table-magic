@@ -19,14 +19,15 @@
 
 Install TableMagic using Composer:
 
-`bash
-composer require chernegasergiy/table-magic`
+```bash
+composer require chernegasergiy/table-magic
+```
 
 ## Usage
 
 Here's a quick example to get you started with TableMagic:
 
-```
+```php
 require_once 'vendor/autoload.php';
 
 use ChernegaSergiy\TableMagic\TableMagic;
