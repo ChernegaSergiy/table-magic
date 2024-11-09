@@ -10,11 +10,11 @@ class Table
 
     public array $rows = [];
 
-    protected array $dividers = [];
+    private array $dividers = [];
 
-    protected array $colWidths = [];
+    private array $colWidths = [];
 
-    protected array $alignments = [];
+    private array $alignments = [];
 
     /**
      * Table constructor.

@@ -6,95 +6,85 @@ use Exception;
 
 class TableImporter
 {
-    private Table $table;
-
     /**
-     * TableImporter constructor.
-     *
-     * @param  Table  $table  The table to import data into.
-     */
-    public function __construct(Table $table)
-    {
-        $this->table = $table;
-    }
-
-    /**
-     * Imports data into the table from the specified format.
+     * Imports data into a new table from the specified format.
      *
      * @param  string  $data  The data to import.
      * @param  string  $format  The format of the data ('csv', 'json', 'xml').
+     * @return Table The newly created table with imported data.
      *
      * @throws Exception If the format is unsupported.
      */
-    public function import(string $data, string $format) : void
+    public function import(string $data, string $format) : Table
     {
         switch (strtolower($format)) {
             case 'csv':
-                $this->fromCsv($data);
-                break;
+                return $this->fromCsv($data);
             case 'json':
-                $this->fromJson($data);
-                break;
+                return $this->fromJson($data);
             case 'xml':
-                $this->fromXml($data);
-                break;
+                return $this->fromXml($data);
             default:
                 throw new Exception("Unsupported format: $format");
         }
     }
 
     /**
-     * Imports data from CSV format into the table.
+     * Imports data from CSV format into a new table.
      *
      * @param  string  $data  The CSV data to import.
+     * @return Table The newly created table with imported data.
      */
-    protected function fromCsv(string $data) : void
+    protected function fromCsv(string $data) : Table
     {
         $lines = explode("\n", $data);
-        $this->table->headers = str_getcsv(array_shift($lines));
+        $headers = str_getcsv(array_shift($lines));
+        $table = new Table($headers);
+
         foreach ($lines as $line) {
             if (! empty(trim($line))) {
-                $this->table->addRow(str_getcsv($line));
+                $table->addRow(str_getcsv($line));
             }
         }
-        $this->table->updateColWidths($this->table->headers);
+
+        return $table;
     }
 
     /**
-     * Imports data from JSON format into the table.
+     * Imports data from JSON format into a new table.
      *
      * @param  string  $data  The JSON data to import.
+     * @return Table The newly created table with imported data.
      */
-    protected function fromJson(string $data) : void
+    protected function fromJson(string $data) : Table
     {
         $decoded = json_decode($data, true);
-        $this->table->headers = $decoded['headers'] ?? [];
-        $this->table->rows = $decoded['rows'] ?? [];
-        $this->table->updateColWidths($this->table->headers);
-        foreach ($this->table->rows as $row) {
-            $this->table->updateColWidths($row);
-        }
+        $table = new Table($decoded['headers'] ?? []);
+        $table->rows = $decoded['rows'] ?? [];
+
+        return $table;
     }
 
     /**
-     * Imports data from XML format into the table.
+     * Imports data from XML format into a new table.
      *
      * @param  string  $data  The XML data to import.
+     * @return Table The newly created table with imported data.
      */
-    protected function fromXml(string $data) : void
+    protected function fromXml(string $data) : Table
     {
         $xml = simplexml_load_string($data);
-        $this->table->headers = explode(',', (string) $xml->headers);
+        $headers = explode(',', (string) $xml->headers);
+        $table = new Table($headers);
+
         foreach ($xml->row as $row) {
             $newRow = [];
             foreach ($row->cell as $cell) {
                 $newRow[] = (string) $cell;
             }
-            $this->table->addRow($newRow);
+            $table->addRow($newRow);
         }
-        $this->table->updateColWidths($this->table->headers);
-        foreach ($this->table->rows as $row) {
-            $this->table->updateColWidths($row);
-        }
+
+        return $table;
     }
 }
