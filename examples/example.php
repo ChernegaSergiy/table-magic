@@ -77,9 +77,12 @@ $dataJson = json_encode([
         [1009, 'Ian Brown', 'Sales', 91, '2024-07-02'],
     ],
 ]);
-$tableImporter = new TableImporter($table);
-$tableImporter->import($dataJson, 'json'); // Import from JSON
 
+// Creating a new importer
+$tableImporter = new TableImporter();
+$table = $tableImporter->import($dataJson, 'json'); // Import from JSON
+
+// Output of the imported table
 echo "\n\nTable After Importing Data from JSON:\n";
 echo $table;
 
