@@ -1,4 +1,4 @@
-﻿# TableMagic
+# TableMagic
 
 [![Latest Stable Version](https://img.shields.io/packagist/v/chernegasergiy/table-magic.svg)](https://packagist.org/packages/chernegasergiy/table-magic)
 [![Total Downloads](https://img.shields.io/packagist/dt/chernegasergiy/table-magic.svg)](https://packagist.org/packages/chernegasergiy/table-magic)
@@ -120,7 +120,7 @@ Please make sure to update tests as appropriate and adhere to the existing codin
 
 ## License
 
-This project is licensed under the MIT License – see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License � see the [LICENSE](LICENSE) file for details.
 
 ## Acknowledgements
 
