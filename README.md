@@ -84,8 +84,8 @@ Sorted by Performance Score (Descending):
 You can import data into the table from various formats:
 
 ```php
-$tableImporter = new TableImporter($table);
-$tableImporter->import($data, 'json'); // 'csv', 'xml' are also supported
+$tableImporter = new TableImporter();
+$table = $tableImporter->import($data, 'json'); // 'csv', 'xml' are also supported
 ```
 
 ### Exporting Data
