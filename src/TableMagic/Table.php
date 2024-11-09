@@ -129,6 +129,26 @@ class Table
     }
 
     /**
+     * Sets the alignment for a specific column.
+     *
+     * @param  string  $column  The name of the column to set the alignment for.
+     * @param  string  $alignment  The alignment to set ('l' for left, 'r' for right, 'c' for center).
+     *
+     * @throws Exception If the column is not found.
+     */
+    public function setAlignment(string $column, string $alignment) : void
+    {
+        $index = array_search($column, $this->headers);
+
+        if (false === $index) {
+            $index = count($this->headers) - 1;
+        }
+
+        $alignment = strtolower($alignment);
+        $this->alignments[$index] = in_array($alignment, ['l', 'r', 'c']) ? $alignment : 'l';
+    }
+
+    /**
      * Sorts the table by a specific column.
      *
      * @param  string  $column  The name of the column to sort by.
