@@ -54,7 +54,7 @@ echo $table;
 
 // Sort the table by 'Performance Score' (descending order)
 $table->sortTable('Performance Score', 'desc');
-echo "\nSorted by Performance Score (Descending):\n";
+echo "\n\nSorted by Performance Score (Descending):\n";
 echo $table;
 ```
 
