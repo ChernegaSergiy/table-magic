@@ -7,7 +7,7 @@
     },
     "autoload": {
         "psr-4": {
-            "ChernegaSergiy\\TableMagic\\": "src/"
+            "ChernegaSergiy\\TableMagic\\": "src/TableMagic/"
         }
     },
     "autoload-dev": {
@@ -16,6 +16,6 @@
         }
     },
     "minimum-stability": "stable",
-    "prefer-stable": true,
-    "license": "MIT"
+    "prefer-stable": true
 }
+
