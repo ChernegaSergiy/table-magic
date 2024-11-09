@@ -1,23 +1,24 @@
-# TableMagic
+﻿# TableMagic
 
 [![Latest Stable Version](https://img.shields.io/packagist/v/chernegasergiy/table-magic.svg)](https://packagist.org/packages/chernegasergiy/table-magic)
 [![Total Downloads](https://img.shields.io/packagist/dt/chernegasergiy/table-magic.svg)](https://packagist.org/packages/chernegasergiy/table-magic)
 [![License](https://img.shields.io/packagist/l/chernegasergiy/table-magic.svg)](https://packagist.org/packages/chernegasergiy/table-magic)
 
-**TableMagic** is a powerful and flexible PHP library for creating beautifully formatted tables in the console. Inspired by Python's PrettyTable, TableMagic empowers developers to effortlessly display tabular data with customizable alignment, sorting, and styling options.
+**TableMagic** is a powerful and flexible PHP library designed for creating and manipulating tables in console output. Inspired by Python's PrettyTable, TableMagic empowers developers to effortlessly display tabular data with customizable alignment, sorting, and styling options.
 
 ## Features
 
-- Easy table creation and row addition
-- Dynamic column sorting
-- Customizable column alignments (left, right, center)
-- UTF-8 support for proper display of non-ASCII characters
-- Automatic column width adjustment
-- Formatted string output for easy integration
+- **Easy Table Creation**: Quickly create tables with headers and rows.
+- **Dynamic Row Addition**: Add rows easily with support for automatic column width adjustment.
+- **Customizable Column Alignments**: Align columns to the left, right, or center.
+- **UTF-8 Support**: Properly display non-ASCII characters.
+- **Sorting Capability**: Sort tables by any column in ascending or descending order.
+- **Export and Import Options**: Import data from CSV, JSON, and XML formats, and export to HTML, CSV, JSON, and XML.
+- **Terminal Interaction**: Paginate through large tables in the console.
 
 ## Installation
 
-Install TableMagic using Composer:
+You can install TableMagic using Composer:
 
 ```bash
 composer require chernegasergiy/table-magic
@@ -30,7 +31,7 @@ Here's a quick example to get you started with TableMagic:
 ```php
 require_once 'vendor/autoload.php';
 
-use ChernegaSergiy\TableMagic\TableMagic;
+use ChernegaSergiy\TableMagic\Table;
 
 // Define headers and alignments
 $headers = ['Employee ID', 'Name', 'Department', 'Performance Score', 'Review Date'];
@@ -40,8 +41,8 @@ $alignments = [
     'Review Date' => 'c'
 ];
 
-// Create a new TableMagic instance
-$table = new TableMagic($headers, $alignments);
+// Create a new Table instance
+$table = new Table($headers, $alignments);
 
 // Add rows to the table
 $table->addRow([1001, 'Alice Thompson', 'Marketing', 85, '2024-06-15']);
@@ -52,7 +53,7 @@ $table->addRow([1003, 'Carol Martinez', 'Engineering', 88, '2024-06-20']);
 echo $table;
 
 // Sort the table by 'Performance Score' (descending order)
-$table->sortTable('Performance Score', SORT_DESC);
+$table->sortTable('Performance Score', 'desc');
 echo "\nSorted by Performance Score (Descending):\n";
 echo $table;
 ```
@@ -78,6 +79,33 @@ Sorted by Performance Score (Descending):
 +-------------+----------------+-------------+-------------------+-------------+
 ```
 
+### Importing Data
+
+You can import data into the table from various formats:
+
+```php
+$tableImporter = new TableImporter($table);
+$tableImporter->import($data, 'json'); // 'csv', 'xml' are also supported
+```
+
+### Exporting Data
+
+Export your table to different formats:
+
+```php
+$tableExporter = new TableExporter($table);
+$htmlOutput = $tableExporter->export('html'); // 'csv', 'json', 'xml' are also supported
+```
+
+### Terminal Interaction
+
+For large datasets, you can interactively paginate through the table:
+
+```php
+$terminalInteraction = new TerminalInteraction($table);
+$terminalInteraction->run();
+```
+
 ## Contributing
 
 Contributions are welcome and appreciated! Here's how you can contribute:
@@ -92,7 +120,7 @@ Please make sure to update tests as appropriate and adhere to the existing codin
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License – see the [LICENSE](LICENSE) file for details.
 
 ## Acknowledgements
 
