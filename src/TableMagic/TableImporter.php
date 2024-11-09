@@ -60,7 +60,10 @@ class TableImporter
     {
         $decoded = json_decode($data, true);
         $table = new Table($decoded['headers'] ?? []);
-        $table->rows = $decoded['rows'] ?? [];
+
+        foreach ($decoded['rows'] ?? [] as $row) {
+            $table->addRow($row);
+        }
 
         return $table;
     }
