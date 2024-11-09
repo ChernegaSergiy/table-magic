@@ -6,9 +6,9 @@ use Exception;
 
 class Table
 {
-    protected array $headers = [];
+    public array $headers = [];
 
-    protected array $rows = [];
+    public array $rows = [];
 
     protected array $dividers = [];
 
