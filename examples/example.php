@@ -1,15 +1,21 @@
-﻿<?php
+<?php
 
 require_once __DIR__ . '/../../../autoload.php'; // Include Composer autoload
 
-use ChernegaSergiy\TableMagic\TableMagic;
+use ChernegaSergiy\TableMagic\Table;
+use ChernegaSergiy\TableMagic\TableExporter;
+use ChernegaSergiy\TableMagic\TableImporter;
 
 // Table headers
 $headers = ['Employee ID', 'Name', 'Department', 'Performance Score', 'Review Date'];
-$alignments = ['Employee ID' => 'r', 'Performance Score' => 'r', 'Review Date' => 'c'];
+$alignments = [
+    'Employee ID' => 'r',
+    'Performance Score' => 'r',
+    'Review Date' => 'c',
+];
 
 // Create a table object
-$table = new TableMagic($headers, $alignments);
+$table = new Table($headers, $alignments);
 
 // Add rows to the table
 $table->addRow([1001, 'Alice Thompson', 'Marketing', 85, '2024-06-15']);
@@ -38,7 +44,7 @@ $table->setAlignments([
     'Name' => 'l',
     'Department' => 'c',
     'Performance Score' => 'r',
-    'Review Date' => 'c'
+    'Review Date' => 'c',
 ]);
 
 echo "\n\nTable with New Alignments:\n";
@@ -62,3 +68,24 @@ echo $table;
 $table->sortTable('Department');
 echo "\n\nSorted by Department:\n";
 echo $table;
+
+// Example of importing data
+$dataJson = json_encode([
+    'headers' => $headers,
+    'rows' => [
+        [1008, 'Hannah Smith', 'Marketing', 87, '2024-06-30'],
+        [1009, 'Ian Brown', 'Sales', 91, '2024-07-02'],
+    ],
+]);
+$tableImporter = new TableImporter($table);
+$tableImporter->import($dataJson, 'json'); // Import from JSON
+
+echo "\n\nTable After Importing Data from JSON:\n";
+echo $table;
+
+// Example of exporting the table to CSV
+$tableExporter = new TableExporter($table);
+$csvOutput = $tableExporter->export('csv');
+file_put_contents('table_output.csv', $csvOutput); // Save to file
+
+echo "\n\nTable exported to CSV file 'table_output.csv'.\n";
