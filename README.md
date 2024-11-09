@@ -38,7 +38,7 @@ $headers = ['Employee ID', 'Name', 'Department', 'Performance Score', 'Review Da
 $alignments = [
     'Employee ID' => 'r',
     'Performance Score' => 'r',
-    'Review Date' => 'c'
+    'Review Date' => 'c',
 ];
 
 // Create a new Table instance
