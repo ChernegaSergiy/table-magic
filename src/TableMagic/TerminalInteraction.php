@@ -10,6 +10,8 @@ class TerminalInteraction
 
     private int $rowsPerPage;
 
+    private array $colWidths = [];
+
     /**
      * TerminalInteraction constructor.
      *
@@ -20,6 +22,7 @@ class TerminalInteraction
     {
         $this->table = $table;
         $this->rowsPerPage = $rowsPerPage;
+        $this->colWidths = $table->colWidths;
     }
 
     /**
@@ -55,6 +58,10 @@ class TerminalInteraction
         $rowsToDisplay = array_slice($this->table->rows, $start, $this->rowsPerPage);
         $currentPageTable = new Table($this->table->headers);
         $currentPageTable->addRows($rowsToDisplay);
+
+        foreach ($currentPageTable->headers as $index => $header) {
+            $currentPageTable->colWidths[$index] = $this->colWidths[$index];
+        }
 
         echo $currentPageTable->getTable();
     }

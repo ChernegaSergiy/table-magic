@@ -12,7 +12,7 @@ class Table
 
     private array $dividers = [];
 
-    private array $colWidths = [];
+    public array $colWidths = [];
 
     private array $alignments = [];
 
