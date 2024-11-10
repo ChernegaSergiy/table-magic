@@ -16,6 +16,12 @@
 - **Export and Import Options**: Import data from CSV, JSON, and XML formats, and export to HTML, CSV, JSON, and XML.
 - **Terminal Interaction**: Paginate through large tables in the console.
 
+## Repository Structure
+
+Here is the structure of the repository:
+
+![Repository Structure](https://github.com/user-attachments/assets/827f0ab3-7dd3-4c86-862b-c68330da94f9)
+
 ## Installation
 
 You can install TableMagic using Composer:
