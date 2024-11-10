@@ -120,9 +120,9 @@ Please make sure to update tests as appropriate and adhere to the existing codin
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the CSSM Unlimited License v2 (CSSM-ULv2). See the [LICENSE](LICENSE) file for details.
 
-## Acknowledgements
+## Acknowledgments
 
 - Inspired by the Python [PrettyTable](https://github.com/jazzband/prettytable) library
 - Thanks to all contributors who have helped shape TableMagic
