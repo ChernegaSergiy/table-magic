@@ -90,6 +90,17 @@ class Table
     }
 
     /**
+     * Checks if a divider exists for the specified row.
+     *
+     * @param  int  $rowIndex  The index of the row to check for a divider.
+     * @return bool Returns `true` if a divider exists for the given row, or `false` if it does not exist or the index is not found.
+     */
+    public function hasDivider(int $rowIndex) : bool
+    {
+        return $this->dividers[$rowIndex] ?? false;
+    }
+
+    /**
      * Returns the formatted table as a string.
      *
      * @return string The formatted table.
@@ -208,7 +219,7 @@ class Table
     /**
      * Draws a horizontal line based on the column widths.
      *
-     * * @return string The drawn line as a string.
+     * @return string The drawn line as a string.
      */
     protected function drawLine() : string
     {
