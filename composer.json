@@ -5,6 +5,9 @@
     "require": {
         "php": "^7.4 || ^8.2"
     },
+    "require-dev": {
+        "phpunit/phpunit": "^10.0"
+    },
     "autoload": {
         "psr-4": {
             "ChernegaSergiy\\TableMagic\\": "src/TableMagic/"
@@ -14,6 +17,9 @@
         "psr-4": {
             "Tests\\": "tests/"
         }
+    },
+    "scripts": {
+        "test": "phpunit"
     },
     "minimum-stability": "stable",
     "prefer-stable": true,
