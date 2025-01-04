@@ -37,7 +37,7 @@ class TableTest extends TestCase
         $table = new Table(['Name']);
         $table->addRow(['Alice'], true);
         $table->removeDivider(0);
-        $this->assertFalse($table->dividers[0]);
+        $this->assertFalse($table->hasDivider(0));
     }
 
     public function testGetTable()
