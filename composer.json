@@ -23,6 +23,6 @@
     },
     "minimum-stability": "stable",
     "prefer-stable": true,
-    "license": "MIT",
+    "license": "LicenseRef-CSSM-Unlimited-2.0",
     "version": "1.2.2"
 }
