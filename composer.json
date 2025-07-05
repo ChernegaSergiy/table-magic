@@ -2,6 +2,7 @@
     "name": "chernegasergiy/table-magic",
     "description": "A PHP library for creating and manipulating tables in a console output format.",
     "type": "library",
+    "license": "LicenseRef-CSSM-Unlimited-2.0",
     "require": {
         "php": "^7.4 || ^8.2"
     },
@@ -23,6 +24,5 @@
     },
     "minimum-stability": "stable",
     "prefer-stable": true,
-    "license": "LicenseRef-CSSM-Unlimited-2.0",
     "version": "1.2.2"
 }
