@@ -71,7 +71,8 @@ class TableExporter
      * Converts the table to CSV format.
      *
      * @return string The CSV representation of the table.
-     * @throws Exception
+     *
+     * @throws Exception If an error occurs during CSV conversion.
      */
     protected function toCsv() : string
     {
@@ -94,7 +95,8 @@ class TableExporter
      * Converts the table to JSON format.
      *
      * @return string The JSON representation of the table.
-     * @throws Exception
+     *
+     * @throws Exception If an error occurs during JSON conversion.
      */
     protected function toJson() : string
     {
@@ -115,7 +117,8 @@ class TableExporter
      * Converts the table to XML format.
      *
      * @return string The XML representation of the table.
-     * @throws Exception
+     *
+     * @throws Exception If an error occurs during XML conversion.
      */
     protected function toXml() : string
     {
