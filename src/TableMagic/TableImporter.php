@@ -58,7 +58,8 @@ class TableImporter
      *
      * @param  string  $data  The JSON data to import.
      * @return Table The newly created table with imported data.
-     * @throws Exception
+     *
+     * @throws Exception If an error occurs during JSON import.
      */
     protected function fromJson(string $data) : Table
     {
@@ -84,7 +85,8 @@ class TableImporter
      *
      * @param  string  $data  The XML data to import.
      * @return Table The newly created table with imported data.
-     * @throws Exception
+     *
+     * @throws Exception If an error occurs during XML import.
      */
     protected function fromXml(string $data) : Table
     {
