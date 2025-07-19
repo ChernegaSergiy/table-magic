@@ -4,6 +4,7 @@
 [![Total Downloads](https://img.shields.io/packagist/dt/chernegasergiy/table-magic.svg?label=Downloads&logo=packagist)](https://packagist.org/packages/chernegasergiy/table-magic)
 [![License](https://img.shields.io/packagist/l/chernegasergiy/table-magic.svg?label=Licence&logo=open-source-initiative)](https://packagist.org/packages/chernegasergiy/table-magic)
 [![Tests](https://img.shields.io/github/actions/workflow/status/ChernegaSergiy/table-magic/phpunit.yml?label=Tests&logo=github)](https://github.com/ChernegaSergiy/table-magic/actions/workflows/phpunit.yml)
+[![Static Analysis](https://img.shields.io/github/actions/workflow/status/ChernegaSergiy/table-magic/phpstan.yml?label=PHPStan&logo=github)](https://github.com/ChernegaSergiy/table-magic/actions/workflows/phpstan.yml)
 
 **TableMagic** is a powerful and flexible PHP library designed for creating and manipulating tables in console output. Inspired by Python's PrettyTable, TableMagic empowers developers to effortlessly display tabular data with customizable alignment, sorting, and styling options.
 
