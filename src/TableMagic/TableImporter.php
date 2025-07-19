@@ -95,18 +95,26 @@ class TableImporter
 
         $headers = [];
         if (isset($xml->headers->header)) {
-            foreach ($xml->headers->header as $header) {
-                $headers[] = (string) $header;
+            foreach ($xml->headers->header as $header_node) {
+                $header_text = (string) $header_node;
+                if (! empty($header_text)) {
+                    $headers[] = $header_text;
+                }
             }
         }
 
         $table = new Table($headers);
 
         if (isset($xml->rows->row)) {
-            foreach ($xml->rows->row as $row) {
+            foreach ($xml->rows->row as $row_node) {
                 $new_row = [];
                 foreach ($headers as $header) {
-                    $new_row[] = isset($row->{$header}) ? (string) $row->{$header} : '';
+                    $cell_value = $row_node->{$header};
+                    if ($cell_value instanceof SimpleXMLElement) {
+                        $new_row[] = (string) $cell_value;
+                    } else {
+                        $new_row[] = '';
+                    }
                 }
                 $table->addRow($new_row);
             }
