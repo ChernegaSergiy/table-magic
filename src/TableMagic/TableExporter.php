@@ -84,13 +84,10 @@ class TableExporter
             fputcsv($output, $row);
         }
         rewind($output);
-        $data = stream_get_contents($output);
-        if (false === $data) {
-            throw new Exception('Failed to read from temporary stream');
-        }
+        $csv_data = stream_get_contents($output);
         fclose($output);
 
-        return $data;
+        return (string) $csv_data;
     }
 
     /**
@@ -124,12 +121,21 @@ class TableExporter
     {
         $xml = new SimpleXMLElement('<table/>');
         $headers_element = $xml->addChild('headers');
+        if (null === $headers_element) {
+            throw new Exception('Failed to add headers element to XML');
+        }
         foreach ($this->table->headers as $header) {
             $headers_element->addChild('header', $header);
         }
         $rows_element = $xml->addChild('rows');
+        if (null === $rows_element) {
+            throw new Exception('Failed to add rows element to XML');
+        }
         foreach ($this->table->rows as $row) {
             $row_xml = $rows_element->addChild('row');
+            if (null === $row_xml) {
+                throw new Exception('Failed to add row element to XML');
+            }
             foreach ($row as $key => $cell) {
                 if (isset($this->table->headers[$key])) {
                     $row_xml->addChild($this->table->headers[$key], htmlspecialchars($cell));
@@ -137,11 +143,11 @@ class TableExporter
             }
         }
 
-        $data = $xml->asXML();
-        if (false === $data) {
+        $xml_output = $xml->asXML();
+        if (false === $xml_output) {
             throw new Exception('Failed to generate XML');
         }
 
-        return $data;
+        return (string) $xml_output;
     }
 }
