@@ -3,6 +3,7 @@
 namespace ChernegaSergiy\TableMagic;
 
 use Exception;
+use SimpleXMLElement;
 
 class TableImporter
 {
@@ -37,13 +38,15 @@ class TableImporter
      */
     protected function fromCsv(string $data) : Table
     {
-        $lines = explode("\n", $data);
-        $headers = str_getcsv(array_shift($lines));
+        $lines = explode("\n", trim($data));
+        $raw_headers = str_getcsv((string) array_shift($lines));
+        $headers = array_map(fn($header) => $header ?? '', $raw_headers);
         $table = new Table($headers);
 
         foreach ($lines as $line) {
             if (! empty(trim($line))) {
-                $table->addRow(str_getcsv($line));
+                $row = str_getcsv($line);
+                $table->addRow(array_map(fn($cell) => $cell ?? '', $row));
             }
         }
 
@@ -55,13 +58,21 @@ class TableImporter
      *
      * @param  string  $data  The JSON data to import.
      * @return Table The newly created table with imported data.
+     * @throws Exception
      */
     protected function fromJson(string $data) : Table
     {
         $decoded = json_decode($data, true);
-        $table = new Table($decoded['headers'] ?? []);
+        if (! is_array($decoded)) {
+            throw new Exception('Invalid JSON data');
+        }
+        /** @var array<int, string> $headers */
+        $headers = $decoded['headers'] ?? [];
+        $table = new Table($headers);
 
-        foreach ($decoded['rows'] ?? [] as $row) {
+        /** @var array<int, array<int, string>> $rows */
+        $rows = $decoded['rows'] ?? [];
+        foreach ($rows as $row) {
             $table->addRow($row);
         }
 
@@ -73,19 +84,32 @@ class TableImporter
      *
      * @param  string  $data  The XML data to import.
      * @return Table The newly created table with imported data.
+     * @throws Exception
      */
     protected function fromXml(string $data) : Table
     {
         $xml = simplexml_load_string($data);
-        $headers = explode(',', (string) $xml->headers);
+        if (false === $xml) {
+            throw new Exception('Invalid XML data');
+        }
+
+        $headers = [];
+        if (isset($xml->headers->header)) {
+            foreach ($xml->headers->header as $header) {
+                $headers[] = (string) $header;
+            }
+        }
+
         $table = new Table($headers);
 
-        foreach ($xml->row as $row) {
-            $newRow = [];
-            foreach ($row->cell as $cell) {
-                $newRow[] = (string) $cell;
+        if (isset($xml->rows->row)) {
+            foreach ($xml->rows->row as $row) {
+                $new_row = [];
+                foreach ($headers as $header) {
+                    $new_row[] = isset($row->{$header}) ? (string) $row->{$header} : '';
+                }
+                $table->addRow($new_row);
             }
-            $table->addRow($newRow);
         }
 
         return $table;
