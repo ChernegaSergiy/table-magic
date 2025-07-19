@@ -181,7 +181,9 @@ class TerminalInteraction
      */
     private function updateColumnWidths() : void
     {
-        $calculate_width = fn ($text) => mb_strwidth((string) $text, 'UTF-8');
+        $calculate_width = function (string $text): int {
+            return mb_strwidth($text, 'UTF-8');
+        };
         $this->col_widths = array_map($calculate_width, $this->table->headers);
 
         foreach ($this->table->rows as $row) {
