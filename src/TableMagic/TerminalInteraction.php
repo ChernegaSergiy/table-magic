@@ -6,23 +6,24 @@ class TerminalInteraction
 {
     private Table $table;
 
-    private int $currentPage = 1;
+    private int $current_page = 1;
 
-    private int $rowsPerPage;
+    private int $rows_per_page;
 
-    private array $colWidths = [];
+    /** @var array<int, int> */
+    private array $col_widths = [];
 
     /**
      * TerminalInteraction constructor.
      *
      * @param  Table  $table  The table to be displayed and interacted with.
-     * @param  int  $rowsPerPage  The number of rows to display per page (default is 5).
+     * @param  int  $rows_per_page  The number of rows to display per page (default is 5).
      */
-    public function __construct(Table $table, int $rowsPerPage = 5)
+    public function __construct(Table $table, int $rows_per_page = 5)
     {
         $this->table = $table;
-        $this->rowsPerPage = $rowsPerPage;
-        $this->colWidths = $table->colWidths;
+        $this->rows_per_page = $rows_per_page;
+        $this->col_widths = $table->col_widths;
     }
 
     /**
@@ -32,19 +33,23 @@ class TerminalInteraction
     {
         while (true) {
             $this->displayCurrentPage();
-            echo "Page {$this->currentPage} of {$this->getTotalPages()}\n";
+            echo "Page {$this->current_page} of {$this->getTotalPages()}\n";
             echo "Enter 'n' for next page, 'p' for previous page, a page number, 'e' to edit a row, 'a' to add a row, 'd' to delete a row, or 'q' to quit: ";
 
-            $input = trim(fgets(STDIN));
+            $input = fgets(STDIN);
+            if (false === $input) {
+                continue;
+            }
+            $input = trim($input);
 
             if ('q' === $input) {
                 break;
-            } elseif ('n' === $input && $this->currentPage < $this->getTotalPages()) {
-                $this->currentPage++;
-            } elseif ('p' === $input && $this->currentPage > 1) {
-                $this->currentPage--;
+            } elseif ('n' === $input && $this->current_page < $this->getTotalPages()) {
+                $this->current_page++;
+            } elseif ('p' === $input && $this->current_page > 1) {
+                $this->current_page--;
             } elseif (is_numeric($input) && $input > 0 && $input <= $this->getTotalPages()) {
-                $this->currentPage = (int) $input;
+                $this->current_page = (int) $input;
             } elseif ('e' === $input) {
                 $this->editRow();
             } elseif ('a' === $input) {
@@ -60,16 +65,16 @@ class TerminalInteraction
      */
     private function displayCurrentPage() : void
     {
-        $start = ($this->currentPage - 1) * $this->rowsPerPage;
-        $rowsToDisplay = array_slice($this->table->rows, $start, $this->rowsPerPage);
-        $currentPageTable = new Table($this->table->headers);
-        $currentPageTable->addRows($rowsToDisplay);
+        $start = ($this->current_page - 1) * $this->rows_per_page;
+        $rows_to_display = array_slice($this->table->rows, $start, $this->rows_per_page);
+        $current_page_table = new Table($this->table->headers);
+        $current_page_table->addRows($rows_to_display);
 
-        foreach ($currentPageTable->headers as $index => $header) {
-            $currentPageTable->colWidths[$index] = $this->colWidths[$index];
+        foreach ($current_page_table->headers as $index => $header) {
+            $current_page_table->col_widths[$index] = $this->col_widths[$index] ?? 0;
         }
 
-        echo $currentPageTable->getTable();
+        echo $current_page_table->getTable();
     }
 
     /**
@@ -79,7 +84,7 @@ class TerminalInteraction
      */
     private function getTotalPages() : int
     {
-        return (int) ceil(count($this->table->rows) / $this->rowsPerPage);
+        return (int) ceil(count($this->table->rows) / $this->rows_per_page);
     }
 
     /**
@@ -88,28 +93,41 @@ class TerminalInteraction
     private function editRow() : void
     {
         echo 'Enter the row number to edit (1 to ' . count($this->table->rows) . '): ';
-        $rowNumber = (int) trim(fgets(STDIN));
+        $row_number_input = fgets(STDIN);
+        if (false === $row_number_input) {
+            return;
+        }
+        $row_number = (int) trim($row_number_input);
 
-        if ($rowNumber < 1 || $rowNumber > count($this->table->rows)) {
+        if ($row_number < 1 || $row_number > count($this->table->rows)) {
             echo "Invalid row number.\n";
 
             return;
         }
 
-        $rowIndex = $rowNumber - 1;
-        $row = $this->table->rows[$rowIndex];
+        $row_index = $row_number - 1;
+        if (! isset($this->table->rows[$row_index])) {
+            echo "Row not found.\n";
 
-        echo 'Editing row ' . $rowNumber . ': ' . implode(', ', $row) . "\n";
+            return;
+        }
+        $row = $this->table->rows[$row_index];
+
+        echo 'Editing row ' . $row_number . ': ' . implode(', ', $row) . "\n";
 
         foreach ($this->table->headers as $index => $header) {
             echo "Enter new value for '{$header}' (leave blank to keep current value): ";
-            $newValue = trim(fgets(STDIN));
-            if ('' !== $newValue) {
-                $row[$index] = $newValue;
+            $new_value = fgets(STDIN);
+            if (false === $new_value) {
+                continue;
+            }
+            $new_value = trim($new_value);
+            if ('' !== $new_value) {
+                $row[$index] = $new_value;
             }
         }
 
-        $this->table->rows[$rowIndex] = $row;
+        $this->table->rows[$row_index] = $row;
         $this->updateColumnWidths();
         echo "Row updated successfully.\n";
     }
@@ -119,14 +137,17 @@ class TerminalInteraction
      */
     private function addRow() : void
     {
-        $newRow = [];
+        $new_row = [];
         foreach ($this->table->headers as $header) {
             echo "Enter value for '{$header}': ";
-            $value = trim(fgets(STDIN));
-            $newRow[] = $value;
+            $value = fgets(STDIN);
+            if (false === $value) {
+                continue;
+            }
+            $new_row[] = trim($value);
         }
 
-        $this->table->addRow($newRow);
+        $this->table->addRow($new_row);
         $this->updateColumnWidths();
         echo "Row added successfully.\n";
     }
@@ -137,16 +158,20 @@ class TerminalInteraction
     private function deleteRow() : void
     {
         echo 'Enter the row number to delete (1 to ' . count($this->table->rows) . '): ';
-        $rowNumber = (int) trim(fgets(STDIN));
+        $row_number_input = fgets(STDIN);
+        if (false === $row_number_input) {
+            return;
+        }
+        $row_number = (int) trim($row_number_input);
 
-        if ($rowNumber < 1 || $rowNumber > count($this->table->rows)) {
+        if ($row_number < 1 || $row_number > count($this->table->rows)) {
             echo "Invalid row number.\n";
 
             return;
         }
 
-        $rowIndex = $rowNumber - 1;
-        array_splice($this->table->rows, $rowIndex, 1);
+        $row_index = $row_number - 1;
+        array_splice($this->table->rows, $row_index, 1);
         $this->updateColumnWidths();
         echo "Row deleted successfully.\n";
     }
@@ -156,12 +181,12 @@ class TerminalInteraction
      */
     private function updateColumnWidths() : void
     {
-        $calculateWidth = fn ($text) => mb_strwidth((string) $text, 'UTF-8');
-        $this->colWidths = array_map($calculateWidth, $this->table->headers);
+        $calculate_width = fn ($text) => mb_strwidth((string) $text, 'UTF-8');
+        $this->col_widths = array_map($calculate_width, $this->table->headers);
 
         foreach ($this->table->rows as $row) {
             foreach ($row as $index => $value) {
-                $this->colWidths[$index] = max($this->colWidths[$index] ?? 0, $calculateWidth($value));
+                $this->col_widths[$index] = max($this->col_widths[$index] ?? 0, $calculate_width($value));
             }
         }
     }
