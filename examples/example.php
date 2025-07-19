@@ -70,7 +70,7 @@ echo "\n\nSorted by Department:\n";
 echo $table;
 
 // Example of importing data
-$dataJson = json_encode([
+$data_json = json_encode([
     'headers' => $headers,
     'rows' => [
         [1008, 'Hannah Smith', 'Marketing', 87, '2024-06-30'],
@@ -79,16 +79,16 @@ $dataJson = json_encode([
 ]);
 
 // Creating a new importer
-$tableImporter = new TableImporter();
-$table = $tableImporter->import($dataJson, 'json'); // Import from JSON
+$table_importer = new TableImporter();
+$table = $table_importer->import($data_json, 'json'); // Import from JSON
 
 // Output of the imported table
 echo "\n\nTable After Importing Data from JSON:\n";
 echo $table;
 
 // Example of exporting the table to CSV
-$tableExporter = new TableExporter($table);
-$csvOutput = $tableExporter->export('csv');
-file_put_contents('table_output.csv', $csvOutput); // Save to file
+$table_exporter = new TableExporter($table);
+$csv_output = $table_exporter->export('csv');
+file_put_contents('table_output.csv', $csv_output); // Save to file
 
 echo "\n\nTable exported to CSV file 'table_output.csv'.\n";
