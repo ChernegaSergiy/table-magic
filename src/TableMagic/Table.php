@@ -6,21 +6,26 @@ use Exception;
 
 class Table
 {
+    /** @var array<int, string> */
     public array $headers = [];
 
+    /** @var array<int, array<int, string>> */
     public array $rows = [];
 
+    /** @var array<int, bool> */
     private array $dividers = [];
 
-    public array $colWidths = [];
+    /** @var array<int, int> */
+    public array $col_widths = [];
 
+    /** @var array<int, string> */
     private array $alignments = [];
 
     /**
      * Table constructor.
      *
-     * @param  array  $headers  Initial headers for the table.
-     * @param  array  $alignments  Initial alignments for the columns.
+     * @param  array<int, string>  $headers  Initial headers for the table.
+     * @param  array<string, string>  $alignments  Initial alignments for the columns.
      */
     public function __construct(array $headers = [], array $alignments = [])
     {
@@ -32,23 +37,23 @@ class Table
     /**
      * Adds a new row to the table.
      *
-     * @param  array  $row  An array representing the row to be added.
+     * @param  array<int|string, string>  $row  An array representing the row to be added.
      * @param  bool  $divider  Whether to add a divider after this row.
      */
     public function addRow(array $row, bool $divider = false) : void
     {
-        $headerCount = count($this->headers);
-        $row = array_pad(array_slice($row, 0, $headerCount), $headerCount, '');
-        $this->rows[] = $row;
+        $header_count = count($this->headers);
+        $row = array_pad(array_slice($row, 0, $header_count), $header_count, '');
+        $this->rows[] = array_values($row);
         $this->dividers[] = $divider;
-        $this->updateColWidths($row);
+        $this->updateColWidths(array_values($row));
     }
 
     /**
      * Adds multiple rows to the table.
      *
-     * @param  array  $rows  An array of arrays representing the rows to be added.
-     * @param  array|null  $dividers  An optional array of booleans indicating where dividers should be added.
+     * @param  array<int, array<int|string, string>>  $rows  An array of arrays representing the rows to be added.
+     * @param  array<int, bool>|null  $dividers  An optional array of booleans indicating where dividers should be added.
      */
     public function addRows(array $rows, ?array $dividers = null) : void
     {
@@ -62,7 +67,7 @@ class Table
      * Adds a new column to the table.
      *
      * @param  string  $header  The header for the new column.
-     * @param  array  $values  The values for the new column.
+     * @param  array<int, string>  $values  The values for the new column.
      * @param  string  $alignment  The alignment for the new column ('l', 'r', or 'c').
      */
     public function addColumn(string $header, array $values, string $alignment = 'l') : void
@@ -76,28 +81,28 @@ class Table
     /**
      * Removes the divider after the specified row index.
      *
-     * @param  int  $rowIndex  The index of the row after which the divider should be removed.
+     * @param  int  $row_index  The index of the row after which the divider should be removed.
      *
      * @throws Exception If the row index is invalid.
      */
-    public function removeDivider(int $rowIndex) : void
+    public function removeDivider(int $row_index) : void
     {
-        if (! isset($this->dividers[$rowIndex])) {
-            throw new Exception("Row index $rowIndex is invalid.");
+        if (! isset($this->dividers[$row_index])) {
+            throw new Exception("Row index $row_index is invalid.");
         }
 
-        $this->dividers[$rowIndex] = false;
+        $this->dividers[$row_index] = false;
     }
 
     /**
      * Checks if a divider exists for the specified row.
      *
-     * @param  int  $rowIndex  The index of the row to check for a divider.
+     * @param  int  $row_index  The index of the row to check for a divider.
      * @return bool Returns `true` if a divider exists for the given row, or `false` if it does not exist or the index is not found.
      */
-    public function hasDivider(int $rowIndex) : bool
+    public function hasDivider(int $row_index) : bool
     {
-        return $this->dividers[$rowIndex] ?? false;
+        return (bool) ($this->dividers[$row_index] ?? false);
     }
 
     /**
@@ -130,7 +135,7 @@ class Table
     /**
      * Sets the alignment for each column header.
      *
-     * @param  array  $alignments  An associative array of column headers to their alignment ('l' for left, 'r' for right, 'c' for center).
+     * @param  array<string, string>  $alignments  An associative array of column headers to their alignment ('l' for left, 'r' for right, 'c' for center).
      */
     public function setAlignments(array $alignments) : void
     {
@@ -178,9 +183,11 @@ class Table
         $order = 'desc' === strtolower($order) ? 'desc' : 'asc';
 
         usort($this->rows, function ($a, $b) use ($index, $order) {
-            $comparison = is_numeric($a[$index]) && is_numeric($b[$index])
-                ? $a[$index] <=> $b[$index]
-                : strcmp($a[$index], $b[$index]);
+            $val_a = (string) ($a[$index] ?? '');
+            $val_b = (string) ($b[$index] ?? '');
+            $comparison = is_numeric($val_a) && is_numeric($val_b)
+                ? $val_a <=> $val_b
+                : strcmp($val_a, $val_b);
 
             return 'asc' === $order ? $comparison : -$comparison;
         });
@@ -189,30 +196,30 @@ class Table
     /**
      * Formats a single row with proper padding and alignment.
      *
-     * @param  array  $row  The row to format.
-     * @param  int  $padType  The type of padding to use (default is STR_PAD_RIGHT).
+     * @param  array<int, string>  $row  The row to format.
+     * @param  int  $pad_type  The type of padding to use (default is STR_PAD_RIGHT).
      * @return string The formatted row as a string.
      */
-    protected function formatRow(array $row, int $padType = STR_PAD_RIGHT) : string
+    protected function formatRow(array $row, int $pad_type = STR_PAD_RIGHT) : string
     {
-        return '|' . implode('|', array_map(function ($value, $i) use ($padType) {
+        return '|' . implode('|', array_map(function ($value, $i) use ($pad_type) {
             $align = $this->alignments[$i] ?? 'l';
-            $padType = 'r' === $align ? STR_PAD_LEFT : ('c' === $align ? STR_PAD_BOTH : $padType);
+            $pad_type = 'r' === $align ? STR_PAD_LEFT : ('c' === $align ? STR_PAD_BOTH : $pad_type);
 
-            return ' ' . $this->mbStrPad((string) $value, $this->colWidths[$i], ' ', $padType) . ' ';
+            return ' ' . $this->mbStrPad($value, $this->col_widths[$i] ?? 0, ' ', $pad_type) . ' ';
         }, $row, array_keys($this->headers))) . '|' . PHP_EOL;
     }
 
     /**
      * Updates the width of each column based on the provided data.
      *
-     * @param  array  $data  The data to evaluate for column widths.
+     * @param  array<int, string>  $data  The data to evaluate for column widths.
      */
     protected function updateColWidths(array $data) : void
     {
         foreach ($data as $i => $value) {
-            $len = mb_strwidth((string) $value, 'UTF-8');
-            $this->colWidths[$i] = max($this->colWidths[$i] ?? 0, $len);
+            $len = mb_strwidth($value, 'UTF-8');
+            $this->col_widths[$i] = max($this->col_widths[$i] ?? 0, $len);
         }
     }
 
@@ -223,44 +230,44 @@ class Table
      */
     protected function drawLine() : string
     {
-        return '+' . implode('+', array_map(fn ($width) => str_repeat('-', $width + 2), $this->colWidths)) . '+' . PHP_EOL;
+        return '+' . implode('+', array_map(fn ($width) => str_repeat('-', $width + 2), $this->col_widths)) . '+' . PHP_EOL;
     }
 
     /**
      * Pads a string to a specified length, accounting for multibyte characters.
      *
      * @param  string  $input  The input string to pad.
-     * @param  int  $padLength  The length to pad to.
-     * @param  string  $padString  The string to pad with (default is a space).
-     * @param  int  $padType  The type of padding to use (default is STR_PAD_RIGHT).
+     * @param  int  $pad_length  The length to pad to.
+     * @param  string  $pad_string  The string to pad with (default is a space).
+     * @param  int  $pad_type  The type of padding to use (default is STR_PAD_RIGHT).
      * @return string The padded string.
      */
-    protected function mbStrPad(string $input, int $padLength, string $padString = ' ', int $padType = STR_PAD_RIGHT) : string
+    protected function mbStrPad(string $input, int $pad_length, string $pad_string = ' ', int $pad_type = STR_PAD_RIGHT) : string
     {
         $diff = strlen($input) - mb_strwidth($input, 'UTF-8');
 
-        return str_pad($input, $padLength + $diff, $padString, $padType);
+        return str_pad($input, $pad_length + $diff, $pad_string, $pad_type);
     }
 
     /**
      * Updates the width of a specific column based on its header and values.
      *
      * @param  string  $header  The header of the column.
-     * @param  array  $values  The values of the column.
+     * @param  array<int, string>  $values  The values of the column.
      */
     protected function updateColumnWidth(string $header, array $values) : void
     {
-        $newColumnWidth = mb_strwidth($header, 'UTF-8');
+        $new_column_width = mb_strwidth($header, 'UTF-8');
         foreach ($values as $value) {
-            $newColumnWidth = max($newColumnWidth, mb_strwidth((string) $value, 'UTF-8'));
+            $new_column_width = max($new_column_width, mb_strwidth($value, 'UTF-8'));
         }
-        $this->colWidths[] = $newColumnWidth;
+        $this->col_widths[] = $new_column_width;
     }
 
     /**
      * Appends values to the end of each row for a new column.
      *
-     * @param  array  $values  The values to append.
+     * @param  array<int, string>  $values  The values to append.
      */
     protected function appendColumnValues(array $values) : void
     {
