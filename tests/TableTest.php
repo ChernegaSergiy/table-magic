@@ -10,7 +10,7 @@ class TableTest extends TestCase
         $table = new Table(['Name', 'Age']);
         $table->addRow(['Alice', 30]);
         $this->assertEquals('Alice', $table->rows[0][0]);
-        $this->assertEquals(31, $table->rows[0][1]);
+        $this->assertEquals(30, $table->rows[0][1]);
     }
 
     public function testAddColumn()
