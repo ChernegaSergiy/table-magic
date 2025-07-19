@@ -3,6 +3,7 @@
 namespace ChernegaSergiy\TableMagic;
 
 use Exception;
+use SimpleXMLElement;
 
 class TableExporter
 {
@@ -70,16 +71,23 @@ class TableExporter
      * Converts the table to CSV format.
      *
      * @return string The CSV representation of the table.
+     * @throws Exception
      */
     protected function toCsv() : string
     {
         $output = fopen('php://temp', 'r+');
+        if (false === $output) {
+            throw new Exception('Failed to open temporary stream');
+        }
         fputcsv($output, $this->table->headers);
         foreach ($this->table->rows as $row) {
             fputcsv($output, $row);
         }
         rewind($output);
         $data = stream_get_contents($output);
+        if (false === $data) {
+            throw new Exception('Failed to read from temporary stream');
+        }
         fclose($output);
 
         return $data;
@@ -89,6 +97,7 @@ class TableExporter
      * Converts the table to JSON format.
      *
      * @return string The JSON representation of the table.
+     * @throws Exception
      */
     protected function toJson() : string
     {
@@ -97,25 +106,42 @@ class TableExporter
             'rows' => $this->table->rows,
         ];
 
-        return json_encode($data);
+        $json = json_encode($data);
+        if (false === $json) {
+            throw new Exception('Failed to encode data to JSON');
+        }
+
+        return $json;
     }
 
     /**
      * Converts the table to XML format.
      *
      * @return string The XML representation of the table.
+     * @throws Exception
      */
     protected function toXml() : string
     {
-        $xml = new \SimpleXMLElement('<table/>');
-        $xml->addChild('headers', implode(',', $this->table->headers));
+        $xml = new SimpleXMLElement('<table/>');
+        $headers_element = $xml->addChild('headers');
+        foreach ($this->table->headers as $header) {
+            $headers_element->addChild('header', $header);
+        }
+        $rows_element = $xml->addChild('rows');
         foreach ($this->table->rows as $row) {
-            $rowXml = $xml->addChild('row');
-            foreach ($row as $cell) {
-                $rowXml->addChild('cell', htmlspecialchars($cell));
+            $row_xml = $rows_element->addChild('row');
+            foreach ($row as $key => $cell) {
+                if (isset($this->table->headers[$key])) {
+                    $row_xml->addChild($this->table->headers[$key], htmlspecialchars($cell));
+                }
             }
         }
 
-        return $xml->asXML();
+        $data = $xml->asXML();
+        if (false === $data) {
+            throw new Exception('Failed to generate XML');
+        }
+
+        return $data;
     }
 }
