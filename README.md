@@ -92,8 +92,8 @@ Sorted by Performance Score (Descending):
 You can import data into the table from various formats:
 
 ```php
-$tableImporter = new TableImporter();
-$table = $tableImporter->import($data, 'json'); // 'csv', 'xml' are also supported
+$table_importer = new TableImporter();
+$table = $table_importer->import($data, 'json'); // 'csv', 'xml' are also supported
 ```
 
 ### Exporting Data
@@ -101,8 +101,8 @@ $table = $tableImporter->import($data, 'json'); // 'csv', 'xml' are also support
 Export your table to different formats:
 
 ```php
-$tableExporter = new TableExporter($table);
-$htmlOutput = $tableExporter->export('html'); // 'csv', 'json', 'xml' are also supported
+$table_exporter = new TableExporter($table);
+$html_output = $table_exporter->export('html'); // 'csv', 'json', 'xml' are also supported
 ```
 
 ### Terminal Interaction
@@ -110,8 +110,8 @@ $htmlOutput = $tableExporter->export('html'); // 'csv', 'json', 'xml' are also s
 For large datasets, you can interactively paginate through the table:
 
 ```php
-$terminalInteraction = new TerminalInteraction($table);
-$terminalInteraction->run();
+$terminal_interaction = new TerminalInteraction($table);
+$terminal_interaction->run();
 ```
 
 ## Contributing
