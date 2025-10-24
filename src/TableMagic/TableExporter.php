@@ -55,7 +55,7 @@ class TableExporter
             $html .= "<th>{$header}</th>";
         }
         $html .= '</tr></thead><tbody>';
-        foreach ($this->table->rows as $row) {
+        foreach ($this->table->getRows() as $row) {
             $html .= '<tr>';
             foreach ($row as $cell) {
                 $html .= "<td>{$cell}</td>";
@@ -76,12 +76,12 @@ class TableExporter
      */
     protected function toCsv() : string
     {
-        $output = fopen('php://temp', 'r+');
+        $output = $this->openTemporaryStream();
         if (false === $output) {
             throw new Exception('Failed to open temporary stream');
         }
         fputcsv($output, $this->table->headers);
-        foreach ($this->table->rows as $row) {
+        foreach ($this->table->getRows() as $row) {
             fputcsv($output, $row);
         }
         rewind($output);
@@ -89,6 +89,14 @@ class TableExporter
         fclose($output);
 
         return (string) $csv_data;
+    }
+
+    /**
+     * @return resource|false
+     */
+    protected function openTemporaryStream()
+    {
+        return fopen('php://temp', 'r+');
     }
 
     /**
@@ -102,7 +110,7 @@ class TableExporter
     {
         $data = [
             'headers' => $this->table->headers,
-            'rows' => $this->table->rows,
+            'rows' => $this->table->getRows(),
         ];
 
         $json = json_encode($data);
@@ -122,35 +130,61 @@ class TableExporter
      */
     protected function toXml() : string
     {
-        $xml = new SimpleXMLElement('<table/>');
-        $headers_element = $xml->addChild('headers');
-        if (null === $headers_element) {
+        $xml = $this->createSimpleXMLElement('<table/>');
+
+
+        $headers_element = $this->addChildToElement($xml, 'headers');
+        if (false === $headers_element || null === $headers_element) {
             throw new Exception('Failed to add headers element to XML');
         }
         foreach ($this->table->headers as $header) {
-            $headers_element->addChild('header', $header);
+            $child = $this->addChildToElement($headers_element, 'header', $header);
+            if (false === $child || null === $child) {
+                throw new Exception('Failed to add header child element to XML');
+            }
         }
-        $rows_element = $xml->addChild('rows');
-        if (null === $rows_element) {
+        $rows_element = $this->addChildToElement($xml, 'rows');
+        if (false === $rows_element || null === $rows_element) {
             throw new Exception('Failed to add rows element to XML');
         }
-        foreach ($this->table->rows as $row) {
-            $row_xml = $rows_element->addChild('row');
-            if (null === $row_xml) {
+        foreach ($this->table->getRows() as $row) {
+            $row_xml = $this->addChildToElement($rows_element, 'row');
+            if (false === $row_xml || null === $row_xml) {
                 throw new Exception('Failed to add row element to XML');
             }
             foreach ($row as $key => $cell) {
                 if (isset($this->table->headers[$key])) {
-                    $row_xml->addChild($this->table->headers[$key], htmlspecialchars($cell));
+                    $child = $this->addChildToElement($row_xml, $this->table->headers[$key], htmlspecialchars($cell));
+                    if (false === $child || null === $child) {
+                        throw new Exception('Failed to add cell child element to XML');
+                    }
                 }
             }
         }
 
-        $xml_output = $xml->asXML();
+        $xml_output = $this->convertXmlToString($xml);
         if (false === $xml_output) {
             throw new Exception('Failed to generate XML');
         }
 
         return (string) $xml_output;
+    }
+
+    protected function createSimpleXMLElement(string $name) : SimpleXMLElement
+    {
+        return new SimpleXMLElement($name);
+    }
+
+    /**
+     * @return SimpleXMLElement|false
+     */
+    protected function addChildToElement(SimpleXMLElement $element, string $name, ?string $value = null) : SimpleXMLElement|false|null
+    {
+        return $element->addChild($name, $value);
+    }
+
+    protected function convertXmlToString(SimpleXMLElement $element) : string|false
+    {
+        return $element->asXML();
     }
 }

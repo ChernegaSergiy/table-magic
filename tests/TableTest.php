@@ -9,8 +9,8 @@ class TableTest extends TestCase
     {
         $table = new Table(['Name', 'Age']);
         $table->addRow(['Alice', 30]);
-        $this->assertEquals('Alice', $table->rows[0][0]);
-        $this->assertEquals(30, $table->rows[0][1]);
+        $this->assertEquals('Alice', $table->getRows()[0][0]);
+        $this->assertEquals(30, $table->getRows()[0][1]);
     }
 
     public function testAddColumn()
@@ -19,7 +19,7 @@ class TableTest extends TestCase
         $table->addRow(['Alice']);
         $table->addColumn('Age', [30]);
         $this->assertEquals('Age', $table->headers[1]);
-        $this->assertEquals(30, $table->rows[0][1]);
+        $this->assertEquals(30, $table->getRows()[0][1]);
     }
 
     public function testSortTable()
@@ -28,8 +28,8 @@ class TableTest extends TestCase
         $table->addRow(['Alice', 30]);
         $table->addRow(['Bob', 25]);
         $table->sortTable('Age');
-        $this->assertEquals('Bob', $table->rows[0][0]);
-        $this->assertEquals(25, $table->rows[0][1]);
+        $this->assertEquals('Bob', $table->getRows()[0][0]);
+        $this->assertEquals(25, $table->getRows()[0][1]);
     }
 
     public function testRemoveDivider()
@@ -56,10 +56,10 @@ class TableTest extends TestCase
             ['Bob', 25],
         ];
         $table->addRows($rows);
-        $this->assertEquals('Alice', $table->rows[0][0]);
-        $this->assertEquals(30, $table->rows[0][1]);
-        $this->assertEquals('Bob', $table->rows[1][0]);
-        $this->assertEquals(25, $table->rows[1][1]);
+        $this->assertEquals('Alice', $table->getRows()[0][0]);
+        $this->assertEquals(30, $table->getRows()[0][1]);
+        $this->assertEquals('Bob', $table->getRows()[1][0]);
+        $this->assertEquals(25, $table->getRows()[1][1]);
     }
 
     public function testAddRowsWithDividers()
@@ -73,6 +73,9 @@ class TableTest extends TestCase
         $table->addRows($rows, $dividers);
         $this->assertFalse($table->hasDivider(0));
         $this->assertTrue($table->hasDivider(1));
+
+        $expected = "+-------+-----+\n| Name  | Age |\n+-------+-----+\n| Alice | 30  |\n| Bob   | 25  |\n+-------+-----+\n+-------+-----+\n";
+        $this->assertEquals($expected, $table->getTable());
     }
 
     public function testRemoveInvalidDivider()
@@ -105,10 +108,10 @@ class TableTest extends TestCase
         $table->addRow(['Bob', 'New York']);
         $table->addRow(['Alice', 'Los Angeles']);
         $table->sortTable('Name');
-        $this->assertEquals('Alice', $table->rows[0][0]);
-        $this->assertEquals('Los Angeles', $table->rows[0][1]);
-        $this->assertEquals('Bob', $table->rows[1][0]);
-        $this->assertEquals('New York', $table->rows[1][1]);
+        $this->assertEquals('Alice', $table->getRows()[0][0]);
+        $this->assertEquals('Los Angeles', $table->getRows()[0][1]);
+        $this->assertEquals('Bob', $table->getRows()[1][0]);
+        $this->assertEquals('New York', $table->getRows()[1][1]);
     }
 
     public function testToString()
@@ -117,5 +120,38 @@ class TableTest extends TestCase
         $table->addRow(['Alice', 30]);
         $expected = "+-------+-----+\n| Name  | Age |\n+-------+-----+\n| Alice | 30  |\n+-------+-----+\n";
         $this->assertEquals($expected, (string)$table);
+    }
+
+    public function testGetColWidths()
+    {
+        $table = new Table(['Header1', 'Header2']);
+        $table->addRow(['Value1', 'LongerValue2']);
+        $table->addRow(['EvenLongerValue1', 'Value2']);
+        $expected_widths = [16, 12]; // 'EvenLongerValue1' (16) and 'LongerValue2' (12)
+        $this->assertEquals($expected_widths, $table->getColWidths());
+    }
+
+    public function testGetRowInvalidIndexThrowsException()
+    {
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage('Row index 0 is invalid.');
+        $table = new Table(['Name']);
+        $table->getRow(0);
+    }
+
+    public function testUpdateRowInvalidIndexThrowsException()
+    {
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage('Row index 0 is invalid.');
+        $table = new Table(['Name']);
+        $table->updateRow(0, ['NewName']);
+    }
+
+    public function testDeleteRowInvalidIndexThrowsException()
+    {
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage('Row index 0 is invalid.');
+        $table = new Table(['Name']);
+        $table->deleteRow(0);
     }
 }

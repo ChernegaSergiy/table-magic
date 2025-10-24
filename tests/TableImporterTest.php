@@ -13,7 +13,7 @@ class TableImporterTest extends TestCase
         $table = $importer->import($csv, 'csv');
         $this->assertInstanceOf(Table::class, $table);
         $this->assertEquals(['Name', 'Age'], $table->headers);
-        $this->assertEquals([['Alice', '30'], ['Bob', '25']], $table->rows);
+        $this->assertEquals([['Alice', '30'], ['Bob', '25']], $table->getRows());
     }
 
     public function testImportFromJson()
@@ -23,7 +23,7 @@ class TableImporterTest extends TestCase
         $table = $importer->import($json, 'json');
         $this->assertInstanceOf(Table::class, $table);
         $this->assertEquals(['Name', 'Age'], $table->headers);
-        $this->assertEquals([['Alice', 30], ['Bob', 25]], $table->rows);
+        $this->assertEquals([['Alice', 30], ['Bob', 25]], $table->getRows());
     }
 
     public function testImportFromXml()
@@ -33,7 +33,7 @@ class TableImporterTest extends TestCase
         $table = $importer->import($xml, 'xml');
         $this->assertInstanceOf(Table::class, $table);
         $this->assertEquals(['Name', 'Age'], $table->headers);
-        $this->assertEquals([['Alice', '30'], ['Bob', '25']], $table->rows);
+        $this->assertEquals([['Alice', '30'], ['Bob', '25']], $table->getRows());
     }
 
     public function testImportWithUnsupportedFormat()
@@ -58,5 +58,13 @@ class TableImporterTest extends TestCase
         $this->expectExceptionMessage('Invalid XML data');
         $importer = new TableImporter();
         $importer->import('invalid-xml', 'xml');
+    }    public function testImportFromXmlWithMissingCell()
+    {
+        $importer = new TableImporter();
+        $xml = '<root><headers><header>Name</header><header>Age</header></headers><rows><row><Name>Alice</Name></row></rows></root>';
+        $table = $importer->import($xml, 'xml');
+        $this->assertInstanceOf(Table::class, $table);
+        $this->assertEquals(['Name', 'Age'], $table->headers);
+        $this->assertEquals([['Alice', '']], $table->getRows());
     }
 }
