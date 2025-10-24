@@ -90,7 +90,9 @@ class TableImporter
      */
     protected function fromXml(string $data) : Table
     {
+        libxml_use_internal_errors(true);
         $xml = simplexml_load_string($data);
+        libxml_clear_errors();
         if (false === $xml) {
             throw new Exception('Invalid XML data');
         }
