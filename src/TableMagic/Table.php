@@ -10,13 +10,23 @@ class Table
     public array $headers = [];
 
     /** @var array<int, array<int, string>> */
-    public array $rows = [];
+    private array $rows = [];
 
     /** @var array<int, bool> */
     private array $dividers = [];
 
     /** @var array<int, int> */
     public array $col_widths = [];
+
+    /**
+     * Returns the column widths.
+     *
+     * @return array<int, int> The column widths.
+     */
+    public function getColWidths() : array
+    {
+        return $this->col_widths;
+    }
 
     /** @var array<int, string> */
     private array $alignments = [];
@@ -215,7 +225,7 @@ class Table
      *
      * @param  array<int, string>  $data  The data to evaluate for column widths.
      */
-    protected function updateColWidths(array $data) : void
+    public function updateColWidths(array $data) : void
     {
         foreach ($data as $i => $value) {
             $len = mb_strwidth($value, 'UTF-8');
@@ -274,6 +284,74 @@ class Table
         foreach ($this->rows as $index => &$row) {
             $row[] = $values[$index] ?? '';
         }
+    }
+
+    /**
+     * Returns all rows in the table.
+     *
+     * @return array<int, array<int, string>> The rows of the table.
+     */
+    public function getRows() : array
+    {
+        return $this->rows;
+    }
+
+    /**
+     * Returns a specific row from the table.
+     *
+     * @param int $index The index of the row to retrieve.
+     * @return array<int, string> The row at the specified index.
+     * @throws Exception If the row index is invalid.
+     */
+    public function getRow(int $index) : array
+    {
+        if (! isset($this->rows[$index])) {
+            throw new Exception("Row index $index is invalid.");
+        }
+        return $this->rows[$index];
+    }
+
+    /**
+     * Updates a specific row in the table.
+     *
+     * @param int $index The index of the row to update.
+     * @param array<int|string, string> $newRow The new data for the row.
+     * @throws Exception If the row index is invalid.
+     */
+    public function updateRow(int $index, array $newRow) : void
+    {
+        if (! isset($this->rows[$index])) {
+            throw new Exception("Row index $index is invalid.");
+        }
+        $header_count = count($this->headers);
+        $newRow = array_pad(array_slice($newRow, 0, $header_count), $header_count, '');
+        $this->rows[$index] = array_values($newRow);
+        $this->updateColWidths(array_values($newRow));
+    }
+
+    /**
+     * Returns the total number of rows in the table.
+     *
+     * @return int The number of rows.
+     */
+    public function getRowCount() : int
+    {
+        return count($this->rows);
+    }
+
+    /**
+     * Deletes a specific row from the table.
+     *
+     * @param int $index The index of the row to delete.
+     * @throws Exception If the row index is invalid.
+     */
+    public function deleteRow(int $index) : void
+    {
+        if (! isset($this->rows[$index])) {
+            throw new Exception("Row index $index is invalid.");
+        }
+        array_splice($this->rows, $index, 1);
+        array_splice($this->dividers, $index, 1);
     }
 
     /**

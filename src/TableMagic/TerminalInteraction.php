@@ -10,20 +10,29 @@ class TerminalInteraction
 
     private int $rows_per_page;
 
-    /** @var array<int, int> */
-    private array $col_widths = [];
+
+
+    /** @var resource */
+    private $input_stream;
+
+    /** @var resource */
+    private $output_stream;
 
     /**
      * TerminalInteraction constructor.
      *
      * @param  Table  $table  The table to be displayed and interacted with.
      * @param  int  $rows_per_page  The number of rows to display per page (default is 5).
+     * @param  resource  $input_stream  The input stream to read from (default is STDIN).
+     * @param  resource  $output_stream  The output stream to write to (default is STDOUT).
      */
-    public function __construct(Table $table, int $rows_per_page = 5)
+    public function __construct(Table $table, int $rows_per_page = 5, $input_stream = STDIN, $output_stream = STDOUT)
     {
         $this->table = $table;
         $this->rows_per_page = $rows_per_page;
-        $this->col_widths = $table->col_widths;
+
+        $this->input_stream = $input_stream;
+        $this->output_stream = $output_stream;
     }
 
     /**
@@ -33,12 +42,12 @@ class TerminalInteraction
     {
         while (true) {
             $this->displayCurrentPage();
-            echo "Page {$this->current_page} of {$this->getTotalPages()}\n";
-            echo "Enter 'n' for next page, 'p' for previous page, a page number, 'e' to edit a row, 'a' to add a row, 'd' to delete a row, or 'q' to quit: ";
+            fwrite($this->output_stream, "Page {$this->current_page} of {$this->getTotalPages()}\n");
+            fwrite($this->output_stream, "Enter 'n' for next page, 'p' for previous page, a page number, 'e' to edit a row, 'a' to add a row, 'd' to delete a row, or 'q' to quit: ");
 
-            $input = fgets(STDIN);
+            $input = fgets($this->input_stream);
             if (false === $input) {
-                continue;
+                break;
             }
             $input = trim($input);
 
@@ -66,15 +75,14 @@ class TerminalInteraction
     private function displayCurrentPage() : void
     {
         $start = ($this->current_page - 1) * $this->rows_per_page;
-        $rows_to_display = array_slice($this->table->rows, $start, $this->rows_per_page);
+        /** @var array<int, array<int, string>> $rows_to_display */
+        $rows_to_display = array_slice($this->table->getRows(), $start, $this->rows_per_page);
         $current_page_table = new Table($this->table->headers);
         $current_page_table->addRows($rows_to_display);
 
-        foreach ($current_page_table->headers as $index => $header) {
-            $current_page_table->col_widths[$index] = $this->col_widths[$index] ?? 0;
-        }
 
-        echo $current_page_table->getTable();
+
+        fwrite($this->output_stream, $current_page_table->getTable());
     }
 
     /**
@@ -84,7 +92,7 @@ class TerminalInteraction
      */
     private function getTotalPages() : int
     {
-        return (int) ceil(count($this->table->rows) / $this->rows_per_page);
+        return (int) ceil($this->table->getRowCount() / $this->rows_per_page);
     }
 
     /**
@@ -92,44 +100,55 @@ class TerminalInteraction
      */
     private function editRow() : void
     {
-        echo 'Enter the row number to edit (1 to ' . count($this->table->rows) . '): ';
-        $row_number_input = fgets(STDIN);
+        fwrite($this->output_stream, 'Enter the row number to edit (1 to ' . $this->table->getRowCount() . '): ');
+        $row_number_input = fgets($this->input_stream);
+
         if (false === $row_number_input) {
             return;
         }
+
         $row_number = (int) trim($row_number_input);
 
-        if ($row_number < 1 || $row_number > count($this->table->rows)) {
-            echo "Invalid row number.\n";
-
+        if ($row_number < 1 || $row_number > $this->table->getRowCount()) {
+            fwrite($this->output_stream, "Invalid row number.\n");
             return;
         }
 
         $row_index = $row_number - 1;
-        if (! isset($this->table->rows[$row_index])) {
-            echo "Row not found.\n";
+        $row = $this->table->getRow($row_index);
+        $original_row = $row;
 
-            return;
-        }
-        $row = $this->table->rows[$row_index];
+        fwrite($this->output_stream, 'Editing row ' . $row_number . ': ' . implode(', ', $row) . "\n");
 
-        echo 'Editing row ' . $row_number . ': ' . implode(', ', $row) . "\n";
+        $changes_made = false;
 
         foreach ($this->table->headers as $index => $header) {
-            echo "Enter new value for '{$header}' (leave blank to keep current value): ";
-            $new_value = fgets(STDIN);
+            fwrite($this->output_stream, "Enter new value for '{$header}' (leave blank to keep current value): ");
+            $new_value = fgets($this->input_stream);
+
             if (false === $new_value) {
                 continue;
             }
+
             $new_value = trim($new_value);
+
             if ('' !== $new_value) {
-                $row[$index] = $new_value;
+                /** @var array<int, string> $temp_row */
+                $temp_row = $this->table->getRow($row_index);
+                $temp_row[$index] = $new_value;
+
+                $this->table->updateRow($row_index, $temp_row);
+
+                $row = $this->table->getRow($row_index);
+                $changes_made = true;
             }
         }
 
-        $this->table->rows[$row_index] = $row;
-        $this->updateColumnWidths();
-        echo "Row updated successfully.\n";
+        if ($changes_made) {
+            fwrite($this->output_stream, "Row updated successfully.\n");
+        } else {
+            fwrite($this->output_stream, "No changes made to row.\n");
+        }
     }
 
     /**
@@ -139,17 +158,16 @@ class TerminalInteraction
     {
         $new_row = [];
         foreach ($this->table->headers as $header) {
-            echo "Enter value for '{$header}': ";
-            $value = fgets(STDIN);
+            fwrite($this->output_stream, "Enter value for '{$header}': ");
+            $value = fgets($this->input_stream);
             if (false === $value) {
-                continue;
+                return;
             }
             $new_row[] = trim($value);
         }
 
         $this->table->addRow($new_row);
-        $this->updateColumnWidths();
-        echo "Row added successfully.\n";
+        fwrite($this->output_stream, "Row added successfully.\n");
     }
 
     /**
@@ -157,39 +175,22 @@ class TerminalInteraction
      */
     private function deleteRow() : void
     {
-        echo 'Enter the row number to delete (1 to ' . count($this->table->rows) . '): ';
-        $row_number_input = fgets(STDIN);
+        fwrite($this->output_stream, 'Enter the row number to delete (1 to ' . $this->table->getRowCount() . '): ');
+        $row_number_input = fgets($this->input_stream);
         if (false === $row_number_input) {
             return;
         }
         $row_number = (int) trim($row_number_input);
 
-        if ($row_number < 1 || $row_number > count($this->table->rows)) {
-            echo "Invalid row number.\n";
+        if ($row_number < 1 || $row_number > $this->table->getRowCount()) {
+            fwrite($this->output_stream, "Invalid row number.\n");
 
             return;
         }
 
         $row_index = $row_number - 1;
-        array_splice($this->table->rows, $row_index, 1);
-        $this->updateColumnWidths();
-        echo "Row deleted successfully.\n";
-    }
+        $this->table->deleteRow($row_index);
 
-    /**
-     * Updates the widths of the columns based on the current data in the table.
-     */
-    private function updateColumnWidths() : void
-    {
-        $calculate_width = function (string $text): int {
-            return mb_strwidth($text, 'UTF-8');
-        };
-        $this->col_widths = array_map($calculate_width, $this->table->headers);
-
-        foreach ($this->table->rows as $row) {
-            foreach ($row as $index => $value) {
-                $this->col_widths[$index] = max($this->col_widths[$index] ?? 0, $calculate_width($value));
-            }
-        }
+        fwrite($this->output_stream, "Row deleted successfully.\n");
     }
 }
