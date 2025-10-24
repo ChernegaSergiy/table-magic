@@ -9,7 +9,7 @@
         </report>
     </coverage>
     <testsuites>
-        <testsuite>
+        <testsuite name="Table Magic Test Suite">
             <directory>./tests</directory>
         </testsuite>
     </testsuites>
