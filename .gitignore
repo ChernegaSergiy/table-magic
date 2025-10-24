@@ -1,7 +1,8 @@
-﻿/vendor/
+/vendor/
 /.idea/
 /*.log
 *.tmp
 .DS_Store
 phpunit.xml
 phpstan.neon
+.phpunit.result.cache
