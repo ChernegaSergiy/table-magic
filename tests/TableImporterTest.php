@@ -1,70 +1,48 @@
 <?php
 
+namespace Tests;
+
+use ChernegaSergiy\TableMagic\Importers\CsvTableImporter;
+use ChernegaSergiy\TableMagic\Importers\JsonTableImporter;
+use ChernegaSergiy\TableMagic\Importers\XmlTableImporter;
 use ChernegaSergiy\TableMagic\Table;
 use ChernegaSergiy\TableMagic\TableImporter;
+use Exception;
 use PHPUnit\Framework\TestCase;
 
 class TableImporterTest extends TestCase
 {
-    public function testImportFromCsv()
+    public function testImportFactoryReturnsCorrectImporterAndImportsData()
     {
         $importer = new TableImporter();
-        $csv = "Name,Age\nAlice,30\nBob,25";
-        $table = $importer->import($csv, 'csv');
-        $this->assertInstanceOf(Table::class, $table);
-        $this->assertEquals(['Name', 'Age'], $table->headers);
-        $this->assertEquals([['Alice', '30'], ['Bob', '25']], $table->getRows());
+
+        // Test CSV
+        $csv_data = "Name,Age\nAlice,30";
+        $table_csv = $importer->import($csv_data, 'csv');
+        $this->assertInstanceOf(Table::class, $table_csv);
+        $this->assertEquals(['Name', 'Age'], $table_csv->headers);
+        $this->assertEquals([['Alice', '30']], $table_csv->getRows());
+
+        // Test JSON
+        $json_data = '{"headers":["Name","Age"],"rows":[["Bob",25]]}';
+        $table_json = $importer->import($json_data, 'json');
+        $this->assertInstanceOf(Table::class, $table_json);
+        $this->assertEquals(['Name', 'Age'], $table_json->headers);
+        $this->assertEquals([['Bob', 25]], $table_json->getRows());
+
+        // Test XML
+        $xml_data = '<root><headers><header>Name</header><header>Age</header></headers><rows><row><Name>Charlie</Name><Age>35</Age></row></rows></root>';
+        $table_xml = $importer->import($xml_data, 'xml');
+        $this->assertInstanceOf(Table::class, $table_xml);
+        $this->assertEquals(['Name', 'Age'], $table_xml->headers);
+        $this->assertEquals([['Charlie', '35']], $table_xml->getRows());
     }
 
-    public function testImportFromJson()
-    {
-        $importer = new TableImporter();
-        $json = '{"headers":["Name","Age"],"rows":[["Alice",30],["Bob",25]]}';
-        $table = $importer->import($json, 'json');
-        $this->assertInstanceOf(Table::class, $table);
-        $this->assertEquals(['Name', 'Age'], $table->headers);
-        $this->assertEquals([['Alice', 30], ['Bob', 25]], $table->getRows());
-    }
-
-    public function testImportFromXml()
-    {
-        $importer = new TableImporter();
-        $xml = '<root><headers><header>Name</header><header>Age</header></headers><rows><row><Name>Alice</Name><Age>30</Age></row><row><Name>Bob</Name><Age>25</Age></row></rows></root>';
-        $table = $importer->import($xml, 'xml');
-        $this->assertInstanceOf(Table::class, $table);
-        $this->assertEquals(['Name', 'Age'], $table->headers);
-        $this->assertEquals([['Alice', '30'], ['Bob', '25']], $table->getRows());
-    }
-
-    public function testImportWithUnsupportedFormat()
+    public function testImportWithUnsupportedFormatThrowsException()
     {
         $this->expectException(Exception::class);
         $this->expectExceptionMessage('Unsupported format: yml');
         $importer = new TableImporter();
         $importer->import('', 'yml');
-    }
-
-    public function testImportWithInvalidJson()
-    {
-        $this->expectException(Exception::class);
-        $this->expectExceptionMessage('Invalid JSON data');
-        $importer = new TableImporter();
-        $importer->import('invalid-json', 'json');
-    }
-
-    public function testImportWithInvalidXml()
-    {
-        $this->expectException(Exception::class);
-        $this->expectExceptionMessage('Invalid XML data');
-        $importer = new TableImporter();
-        $importer->import('invalid-xml', 'xml');
-    }    public function testImportFromXmlWithMissingCell()
-    {
-        $importer = new TableImporter();
-        $xml = '<root><headers><header>Name</header><header>Age</header></headers><rows><row><Name>Alice</Name></row></rows></root>';
-        $table = $importer->import($xml, 'xml');
-        $this->assertInstanceOf(Table::class, $table);
-        $this->assertEquals(['Name', 'Age'], $table->headers);
-        $this->assertEquals([['Alice', '']], $table->getRows());
     }
 }
