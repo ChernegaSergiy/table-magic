@@ -6,6 +6,7 @@ use InvalidArgumentException;
 
 class TableStyleRegistry
 {
+    /** @var array<string, TableStyle> */
     private static array $styles = [];
     private static bool $isInitialized = false;
 
