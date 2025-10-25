@@ -2,6 +2,8 @@
 
 namespace ChernegaSergiy\TableMagic;
 
+use ChernegaSergiy\TableMagic\TableExporter;
+
 class TerminalInteraction
 {
     private Table $table;
@@ -10,13 +12,13 @@ class TerminalInteraction
 
     private int $rows_per_page;
 
-
-
     /** @var resource */
     private $input_stream;
 
     /** @var resource */
     private $output_stream;
+
+    private ?TableExporter $tableExporter;
 
     /**
      * TerminalInteraction constructor.
@@ -25,14 +27,16 @@ class TerminalInteraction
      * @param  int  $rows_per_page  The number of rows to display per page (default is 5).
      * @param  resource  $input_stream  The input stream to read from (default is STDIN).
      * @param  resource  $output_stream  The output stream to write to (default is STDOUT).
+     * @param  TableExporter|null  $tableExporter  Optional TableExporter instance for dependency injection.
      */
-    public function __construct(Table $table, int $rows_per_page = 5, $input_stream = STDIN, $output_stream = STDOUT)
+    public function __construct(Table $table, int $rows_per_page = 5, $input_stream = STDIN, $output_stream = STDOUT, ?TableExporter $tableExporter = null)
     {
         $this->table = $table;
         $this->rows_per_page = $rows_per_page;
 
         $this->input_stream = $input_stream;
         $this->output_stream = $output_stream;
+        $this->tableExporter = $tableExporter;
     }
 
     /**
@@ -43,7 +47,7 @@ class TerminalInteraction
         while (true) {
             $this->displayCurrentPage();
             fwrite($this->output_stream, "Page {$this->current_page} of {$this->getTotalPages()}\n");
-            fwrite($this->output_stream, "Enter 'n' for next page, 'p' for previous page, a page number, 'e' to edit a row, 'a' to add a row, 'd' to delete a row, or 'q' to quit: ");
+            fwrite($this->output_stream, "Enter 'n' for next page, 'p' for previous page, a page number, 'e' to edit a row, 'a' to add a row, 'd' to delete a row, 'x' to export, or 'q' to quit: ");
 
             $input = fgets($this->input_stream);
             if (false === $input) {
@@ -65,7 +69,62 @@ class TerminalInteraction
                 $this->addRow();
             } elseif ('d' === $input) {
                 $this->deleteRow();
+            } elseif ('x' === $input) {
+                $this->exportTable();
             }
+        }
+    }
+
+    /**
+     * Exports the current table to a chosen format and file.
+     */
+    private function exportTable() : void
+    {
+        $available_formats = ['csv', 'json', 'xml', 'html'];
+        $format = '';
+        while (! in_array($format, $available_formats, true)) {
+            fwrite($this->output_stream, 'Enter export format (csv, json, xml, html): ');
+            $format_input = fgets($this->input_stream);
+            if (false === $format_input) {
+                fwrite($this->output_stream, "Export cancelled.\n");
+                return;
+            }
+            $format = strtolower(trim($format_input));
+            if (! in_array($format, $available_formats, true)) {
+                fwrite($this->output_stream, "Invalid format. Please choose from " . implode(', ', $available_formats) . ".\n");
+            }
+        }
+
+        $filename = '';
+        while (empty($filename)) {
+            fwrite($this->output_stream, 'Enter filename (e.g., table.csv): ');
+            $filename_input = fgets($this->input_stream);
+            if (false === $filename_input) {
+                fwrite($this->output_stream, "Export cancelled.\n");
+                return;
+            }
+            $filename = trim($filename_input);
+            if (empty($filename)) {
+                fwrite($this->output_stream, "Filename cannot be empty.\n");
+            }
+        }
+
+        if (file_exists($filename)) {
+            fwrite($this->output_stream, "File '{$filename}' already exists. Overwrite? (y/n): ");
+            $overwrite_input = fgets($this->input_stream);
+            if (false === $overwrite_input || strtolower(trim($overwrite_input)) !== 'y') {
+                fwrite($this->output_stream, "Export cancelled.\n");
+                return;
+            }
+        }
+
+        try {
+            $exporter = $this->tableExporter ?? new TableExporter($this->table);
+            $exported_data = $exporter->export($format);
+            file_put_contents($filename, $exported_data);
+            fwrite($this->output_stream, "Table exported successfully to '{$filename}'.\n");
+        } catch (\Exception $e) {
+            fwrite($this->output_stream, "Error exporting table: " . $e->getMessage() . "\n");
         }
     }
 

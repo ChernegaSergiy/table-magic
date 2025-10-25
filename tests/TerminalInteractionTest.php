@@ -2,6 +2,7 @@
 
 namespace Tests;
 
+use ChernegaSergiy\TableMagic\TableExporter;
 use PHPUnit\Framework\TestCase;
 use ChernegaSergiy\TableMagic\Table;
 use ChernegaSergiy\TableMagic\TerminalInteraction;
@@ -11,16 +12,24 @@ class TerminalInteractionTest extends TestCase
     private $input_stream;
     private $output_stream;
 
+    private string $test_file = 'test_output.csv';
+
     protected function setUp(): void
     {
         $this->input_stream = fopen('php://memory', 'r+');
         $this->output_stream = fopen('php://memory', 'r+');
+        if (file_exists($this->test_file)) {
+            unlink($this->test_file);
+        }
     }
 
     protected function tearDown(): void
     {
         fclose($this->input_stream);
         fclose($this->output_stream);
+        if (file_exists($this->test_file)) {
+            unlink($this->test_file);
+        }
     }
 
     private function setInput(string $input): void
@@ -38,7 +47,7 @@ class TerminalInteractionTest extends TestCase
     public function testConstructor()
     {
         $table = new Table(['Header1', 'Header2']);
-        $interaction = new TerminalInteraction($table, 10);
+        $interaction = new TerminalInteraction($table, 10, $this->input_stream, $this->output_stream, null);
 
         $this->assertInstanceOf(TerminalInteraction::class, $interaction);
     }
@@ -48,13 +57,13 @@ class TerminalInteractionTest extends TestCase
         $this->setInput("q\n");
 
         $table = new Table(['Header1', 'Header2']);
-        $interaction = new TerminalInteraction($table, 5, $this->input_stream, $this->output_stream);
+        $interaction = new TerminalInteraction($table, 5, $this->input_stream, $this->output_stream, null);
 
         $interaction->run();
 
         $output = $this->getOutput();
         $this->assertStringContainsString('Page 1 of 0', $output);
-        $this->assertStringContainsString("Enter 'n' for next page, 'p' for previous page, a page number, 'e' to edit a row, 'a' to add a row, 'd' to delete a row, or 'q' to quit:", $output);
+        $this->assertStringContainsString("Enter 'n' for next page, 'p' for previous page, a page number, 'e' to edit a row, 'a' to add a row, 'd' to delete a row, 'x' to export, or 'q' to quit:", $output);
     }
 
     public function testDisplayCurrentPage()
@@ -64,7 +73,7 @@ class TerminalInteractionTest extends TestCase
         $table->addRow(['Bob', '24']);
         $table->addRow(['Charlie', '35']);
 
-        $interaction = new TerminalInteraction($table, 2, $this->input_stream, $this->output_stream);
+        $interaction = new TerminalInteraction($table, 2, $this->input_stream, $this->output_stream, null);
 
         // Access private method using reflection for testing
         $reflection = new \ReflectionClass($interaction);
@@ -88,7 +97,7 @@ class TerminalInteractionTest extends TestCase
 
         $this->setInput("n\nq\n"); // Go to next page, then quit
 
-        $interaction = new TerminalInteraction($table, 2, $this->input_stream, $this->output_stream);
+        $interaction = new TerminalInteraction($table, 2, $this->input_stream, $this->output_stream, null);
         $interaction->run();
 
         $output = $this->getOutput();
@@ -106,7 +115,7 @@ class TerminalInteractionTest extends TestCase
 
         $this->setInput("n\np\nq\n"); // Go to next page, then previous page, then quit
 
-        $interaction = new TerminalInteraction($table, 2, $this->input_stream, $this->output_stream);
+        $interaction = new TerminalInteraction($table, 2, $this->input_stream, $this->output_stream, null);
         $interaction->run();
 
         $output = $this->getOutput();
@@ -124,7 +133,7 @@ class TerminalInteractionTest extends TestCase
 
         $this->setInput("2\nq\n"); // Go to page 2, then quit
 
-        $interaction = new TerminalInteraction($table, 2, $this->input_stream, $this->output_stream);
+        $interaction = new TerminalInteraction($table, 2, $this->input_stream, $this->output_stream, null);
         $interaction->run();
 
         $output = $this->getOutput();
@@ -139,7 +148,7 @@ class TerminalInteractionTest extends TestCase
         $table->addRow(['Bob', '24']);
         $table->addRow(['Charlie', '35']);
 
-        $interaction = new TerminalInteraction($table, 2);
+        $interaction = new TerminalInteraction($table, 2, $this->input_stream, $this->output_stream, null);
 
         // Access private method using reflection for testing
         $reflection = new \ReflectionClass($interaction);
@@ -150,7 +159,7 @@ class TerminalInteractionTest extends TestCase
 
         $table_single_page = new Table(['Name', 'Age']);
         $table_single_page->addRow(['Alice', '30']);
-        $interaction_single_page = new TerminalInteraction($table_single_page, 2);
+        $interaction_single_page = new TerminalInteraction($table_single_page, 2, $this->input_stream, $this->output_stream, null);
 
         $this->assertEquals(1, $method->invoke($interaction_single_page));
     }
@@ -163,7 +172,7 @@ class TerminalInteractionTest extends TestCase
 
         $this->setInput("e\n1\nBob Smith\n31\nq\n"); // Edit row 1, change Name to Bob Smith, Age to 31, then quit
 
-        $interaction = new TerminalInteraction($table, 5, $this->input_stream, $this->output_stream);
+        $interaction = new TerminalInteraction($table, 5, $this->input_stream, $this->output_stream, null);
         $interaction->run();
 
         $output = $this->getOutput();
@@ -179,7 +188,7 @@ class TerminalInteractionTest extends TestCase
 
         $this->setInput("a\nCharlie\n35\nq\n"); // Add a new row, then quit
 
-        $interaction = new TerminalInteraction($table, 5, $this->input_stream, $this->output_stream);
+        $interaction = new TerminalInteraction($table, 5, $this->input_stream, $this->output_stream, null);
         $interaction->run();
 
         $output = $this->getOutput();
@@ -196,7 +205,7 @@ class TerminalInteractionTest extends TestCase
 
         $this->setInput("d\n1\nq\n"); // Delete row 1, then quit
 
-        $interaction = new TerminalInteraction($table, 5, $this->input_stream, $this->output_stream);
+        $interaction = new TerminalInteraction($table, 5, $this->input_stream, $this->output_stream, null);
         $interaction->run();
 
         $output = $this->getOutput();
@@ -211,7 +220,7 @@ class TerminalInteractionTest extends TestCase
 
         $this->setInput("e\n99\nq\n"); // Try to edit invalid row, then quit
 
-        $interaction = new TerminalInteraction($table, 5, $this->input_stream, $this->output_stream);
+        $interaction = new TerminalInteraction($table, 5, $this->input_stream, $this->output_stream, null);
         $interaction->run();
 
         $output = $this->getOutput();
@@ -225,7 +234,7 @@ class TerminalInteractionTest extends TestCase
 
         $this->setInput("d\n99\nq\n"); // Try to delete invalid row, then quit
 
-        $interaction = new TerminalInteraction($table, 5, $this->input_stream, $this->output_stream);
+        $interaction = new TerminalInteraction($table, 5, $this->input_stream, $this->output_stream, null);
         $interaction->run();
 
         $output = $this->getOutput();
@@ -235,7 +244,7 @@ class TerminalInteractionTest extends TestCase
     public function testRunFgetsReturnsFalse()
     {
         $table = new Table(['Header1', 'Header2']);
-        $interaction = new TerminalInteraction($table, 5, $this->input_stream, $this->output_stream);
+        $interaction = new TerminalInteraction($table, 5, $this->input_stream, $this->output_stream, null);
 
         $this->setInput(""); // Provide empty input to simulate EOF
 
@@ -253,7 +262,7 @@ class TerminalInteractionTest extends TestCase
 
         $this->setInput("e\n"); // Enter 'e', then simulate false for row number input
 
-        $interaction = new TerminalInteraction($table, 5, $this->input_stream, $this->output_stream);
+        $interaction = new TerminalInteraction($table, 5, $this->input_stream, $this->output_stream, null);
 
         $interaction->run();
 
@@ -269,7 +278,7 @@ class TerminalInteractionTest extends TestCase
 
         $this->setInput("a\n"); // Enter 'a', then simulate false for value input
 
-        $interaction = new TerminalInteraction($table, 5, $this->input_stream, $this->output_stream);
+        $interaction = new TerminalInteraction($table, 5, $this->input_stream, $this->output_stream, null);
 
         $interaction->run();
 
@@ -286,7 +295,7 @@ class TerminalInteractionTest extends TestCase
 
         $this->setInput("d\n"); // Enter 'd', then simulate false for row number input
 
-        $interaction = new TerminalInteraction($table, 5, $this->input_stream, $this->output_stream);
+        $interaction = new TerminalInteraction($table, 5, $this->input_stream, $this->output_stream, null);
 
         $interaction->run();
 
@@ -303,7 +312,7 @@ class TerminalInteractionTest extends TestCase
 
         $this->setInput("e\n1\n"); // Enter 'e', then row number 1, then simulate false for new value input
 
-        $interaction = new TerminalInteraction($table, 5, $this->input_stream, $this->output_stream);
+        $interaction = new TerminalInteraction($table, 5, $this->input_stream, $this->output_stream, null);
 
         $interaction->run();
 
@@ -336,7 +345,7 @@ class TerminalInteractionTest extends TestCase
 
         $this->setInput("e\n1\n\n\nq\n"); // Edit row 1, provide empty input for Name and Age, then quit
 
-        $interaction = new TerminalInteraction($table, 5, $this->input_stream, $this->output_stream);
+        $interaction = new TerminalInteraction($table, 5, $this->input_stream, $this->output_stream, null);
         $interaction->run();
 
         $output = $this->getOutput();
@@ -353,7 +362,7 @@ class TerminalInteractionTest extends TestCase
         // Simulate input for row number, then empty for new values
         $this->setInput("1\n");
 
-        $interaction = new TerminalInteraction($table, 5, $this->input_stream, $this->output_stream);
+        $interaction = new TerminalInteraction($table, 5, $this->input_stream, $this->output_stream, null);
 
         // Call editRow directly using reflection
         $reflection = new \ReflectionClass($interaction);
@@ -367,6 +376,143 @@ class TerminalInteractionTest extends TestCase
         $this->assertStringContainsString("Enter new value for 'Name'", $output);
         $this->assertStringContainsString('No changes made to row.', $output);
         $this->assertStringContainsString('Alice', $output);
+    }
+
+    public function testRunExportTableSuccessfully()
+    {
+        $table = new Table(['Name', 'Age']);
+        $table->addRow(['Alice', '30']);
+
+        $this->setInput("x\ncsv\n" . $this->test_file . "\nq\n");
+
+        $interaction = new TerminalInteraction($table, 5, $this->input_stream, $this->output_stream, null);
+        $interaction->run();
+
+        $output = $this->getOutput();
+        $this->assertStringContainsString('Table exported successfully to ', $output);
+        $this->assertFileExists($this->test_file);
+        $this->assertEquals("Name,Age\nAlice,30\n", file_get_contents($this->test_file));
+    }
+
+    public function testRunExportTableInvalidFormatThenValid()
+    {
+        $table = new Table(['Name', 'Age']);
+        $table->addRow(['Alice', '30']);
+
+        $this->setInput("x\ninvalid\ncsv\n" . $this->test_file . "\nq\n");
+
+        $interaction = new TerminalInteraction($table, 5, $this->input_stream, $this->output_stream, null);
+        $interaction->run();
+
+        $output = $this->getOutput();
+        $this->assertStringContainsString('Invalid format.', $output);
+        $this->assertStringContainsString('Table exported successfully to ', $output);
+        $this->assertFileExists($this->test_file);
+        $this->assertEquals("Name,Age\nAlice,30\n", file_get_contents($this->test_file));
+    }
+
+    public function testRunExportTableCancelOnFormatPrompt()
+    {
+        $table = new Table(['Name', 'Age']);
+        $table->addRow(['Alice', '30']);
+
+        $this->setInput("x\n\nq\n"); // Enter x, then empty input for format (simulates false from fgets), then quit
+
+        $interaction = new TerminalInteraction($table, 5, $this->input_stream, $this->output_stream, null);
+        $interaction->run();
+
+        $output = $this->getOutput();
+        $this->assertStringContainsString('Export cancelled.', $output);
+        $this->assertFileDoesNotExist($this->test_file);
+    }
+
+    public function testRunExportTableCancelOnFilenamePrompt()
+    {
+        $table = new Table(['Name', 'Age']);
+        $table->addRow(['Alice', '30']);
+
+        // Simulate 'x', then 'csv', then EOF for filename input
+        $this->setInput("x\ncsv\n"); // No trailing newline after csv, so next fgets will return false
+
+        $interaction = new TerminalInteraction($table, 5, $this->input_stream, $this->output_stream, null);
+        $interaction->run();
+
+        $output = $this->getOutput();
+        $this->assertStringContainsString('Export cancelled.', $output);
+        $this->assertFileDoesNotExist($this->test_file);
+    }
+
+    public function testRunExportTableOverwriteExistingFile()
+    {
+        $table = new Table(['Name', 'Age']);
+        $table->addRow(['Alice', '30']);
+
+        file_put_contents($this->test_file, "Old content\n");
+
+        $this->setInput("x\ncsv\n" . $this->test_file . "\ny\nq\n"); // Export, provide existing filename, confirm overwrite, then quit
+
+        $interaction = new TerminalInteraction($table, 5, $this->input_stream, $this->output_stream, null);
+        $interaction->run();
+
+        $output = $this->getOutput();
+        $this->assertStringContainsString("File '{$this->test_file}' already exists. Overwrite? (y/n): ", $output);
+        $this->assertStringContainsString('Table exported successfully to ', $output);
+        $this->assertEquals("Name,Age\nAlice,30\n", file_get_contents($this->test_file));
+    }
+
+    public function testRunExportTableDoNotOverwriteExistingFile()
+    {
+        $table = new Table(['Name', 'Age']);
+        $table->addRow(['Alice', '30']);
+
+        file_put_contents($this->test_file, "Old content\n");
+
+        $this->setInput("x\ncsv\n" . $this->test_file . "\nn\nq\n"); // Export, provide existing filename, deny overwrite, then quit
+
+        $interaction = new TerminalInteraction($table, 5, $this->input_stream, $this->output_stream, null);
+        $interaction->run();
+
+        $output = $this->getOutput();
+        $this->assertStringContainsString("File '{$this->test_file}' already exists. Overwrite? (y/n): ", $output);
+        $this->assertStringContainsString('Export cancelled.', $output);
+        $this->assertEquals("Old content\n", file_get_contents($this->test_file)); // Content should remain unchanged
+    }
+
+    public function testRunExportTableExportFails()
+    {
+        $table = new Table(['Name', 'Age']);
+        $table->addRow(['Alice', '30']);
+
+        // Mock TableExporter to throw an exception during export
+        $mockTableExporter = $this->createMock(TableExporter::class);
+        $mockTableExporter->method('export')
+                          ->willThrowException(new \Exception('Simulated export failure'));
+
+        // Create a TerminalInteraction instance with the mock exporter
+        $this->setInput("x\ncsv\n" . $this->test_file . "\nq\n");
+        $interaction = new TerminalInteraction($table, 5, $this->input_stream, $this->output_stream, $mockTableExporter);
+        $interaction->run();
+
+        $output = $this->getOutput();
+        $this->assertStringContainsString('Error exporting table: Simulated export failure', $output);
+        $this->assertFileDoesNotExist($this->test_file);
+    }
+
+    public function testRunExportTableEmptyFilenameThenValid()
+    {
+        $table = new Table(['Name', 'Age']);
+        $table->addRow(['Alice', '30']);
+
+        $this->setInput("x\ncsv\n\n" . $this->test_file . "\nq\n"); // Export, csv, empty filename, then valid filename, then quit
+
+        $interaction = new TerminalInteraction($table, 5, $this->input_stream, $this->output_stream, null);
+        $interaction->run();
+
+        $output = $this->getOutput();
+        $this->assertStringContainsString('Filename cannot be empty.', $output);
+        $this->assertStringContainsString('Table exported successfully to ', $output);
+        $this->assertFileExists($this->test_file);
+        $this->assertEquals("Name,Age\nAlice,30\n", file_get_contents($this->test_file));
     }
 
 }
