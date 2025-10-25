@@ -10,10 +10,10 @@ class HtmlTableExporter implements TableExporterInterface
     /**
      * Exports a Table object to an HTML string representation.
      *
-     * @param Table $table The Table object to export.
+     * @param  Table  $table  The Table object to export.
      * @return string The HTML string representation of the table.
      */
-    public function export(Table $table): string
+    public function export(Table $table) : string
     {
         $html = '<table border="1"><thead><tr>';
         foreach ($table->headers as $header) {
