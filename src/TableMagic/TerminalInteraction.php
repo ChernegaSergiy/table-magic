@@ -82,10 +82,10 @@ class TerminalInteraction
      */
     private function exportTable() : void
     {
-        $available_formats = ['csv', 'json', 'xml', 'html'];
+        $available_formats = ['csv', 'json', 'xml', 'html', 'markdown'];
         $format = '';
         while (! in_array($format, $available_formats, true)) {
-            fwrite($this->output_stream, 'Enter export format (csv, json, xml, html): ');
+            fwrite($this->output_stream, 'Enter export format (csv, json, xml, html, markdown): ');
             $format_input = fgets($this->input_stream);
             if (false === $format_input) {
                 fwrite($this->output_stream, "Export cancelled.\n");
