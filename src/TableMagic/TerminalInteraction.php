@@ -47,7 +47,7 @@ class TerminalInteraction
         while (true) {
             $this->displayCurrentPage();
             fwrite($this->output_stream, "Page {$this->current_page} of {$this->getTotalPages()}\n");
-            fwrite($this->output_stream, "Enter 'n' for next page, 'p' for previous page, a page number, 'e' to edit a row, 'a' to add a row, 'd' to delete a row, 'x' to export, or 'q' to quit: ");
+            fwrite($this->output_stream, "Enter 'n' for next page, 'p' for previous page, a page number, 'e' to edit a row, 'a' to add a row, 'd' to delete a row, 's' to sort, 'x' to export, or 'q' to quit: ");
 
             $input = fgets($this->input_stream);
             if (false === $input) {
@@ -69,6 +69,8 @@ class TerminalInteraction
                 $this->addRow();
             } elseif ('d' === $input) {
                 $this->deleteRow();
+            } elseif ('s' === $input) {
+                $this->sortTable();
             } elseif ('x' === $input) {
                 $this->exportTable();
             }
@@ -251,5 +253,39 @@ class TerminalInteraction
         $this->table->deleteRow($row_index);
 
         fwrite($this->output_stream, "Row deleted successfully.\n");
+    }
+
+    /**
+     * Sorts the table by a chosen column and order.
+     */
+    private function sortTable() : void
+    {
+        $headers = $this->table->headers;
+        fwrite($this->output_stream, "Available columns: " . implode(', ', $headers) . "\n");
+        fwrite($this->output_stream, 'Enter the column name to sort by: ');
+        $column_name_input = fgets($this->input_stream);
+        if (false === $column_name_input) {
+            return;
+        }
+        $column_name = trim($column_name_input);
+
+        if (! in_array($column_name, $headers, true)) {
+            fwrite($this->output_stream, "Invalid column name.\n");
+            return;
+        }
+
+        fwrite($this->output_stream, 'Enter sort order (asc/desc, default asc): ');
+        $sort_order_input = fgets($this->input_stream);
+        if (false === $sort_order_input) {
+            return;
+        }
+        $sort_order = strtolower(trim($sort_order_input));
+        if (! in_array($sort_order, ['asc', 'desc'], true)) {
+            $sort_order = 'asc'; // Default to ascending
+        }
+
+        $this->table->sortTable($column_name, $sort_order);
+        fwrite($this->output_stream, "Table sorted by '{$column_name}' in {$sort_order}ending order.\n");
+        $this->current_page = 1; // Reset to first page after sorting
     }
 }
