@@ -105,6 +105,26 @@ Sorted by Performance Score (Descending):
 +-------------+----------------+-------------+-------------------+-------------+
 ```
 
+## Table Styling
+
+TableMagic offers extensive customization options for table appearance through its styling system. You can apply various predefined styles or define your own custom styles to match your application's aesthetic.
+
+### Predefined Styles
+
+TableMagic comes with several built-in styles, including: `default`, `compact`, `dots`, `rounded`, `unicode-single-line`, `unicode-double-line`, `github-markdown`, `reddit-markdown`, `restructured-text-grid`, and `restructured-text-simple`.
+
+Here's an example demonstrating some of these styles, along with a custom one:
+
+## Table Styling
+
+TableMagic offers extensive customization options for table appearance through its styling system. You can apply various predefined styles or define your own custom styles to match your application's aesthetic.
+
+### Predefined Styles
+
+TableMagic comes with several built-in styles, including: `default`, `compact`, `dots`, `rounded`, `unicode-single-line`, `unicode-double-line`, `github-markdown`, `reddit-markdown`, `restructured-text-grid`, and `restructured-text-simple`.
+
+Here's an example demonstrating some of these styles, along with a custom one:
+
 ```php
 require_once 'vendor/autoload.php';
 
@@ -112,32 +132,80 @@ use ChernegaSergiy\TableMagic\Table;
 use ChernegaSergiy\TableMagic\TableStyle;
 use ChernegaSergiy\TableMagic\TableStyleRegistry;
 
-$table = new Table(['Name', 'Age']);
-$table->addRow(['Alice', 30]);
+$table = new Table(
+    ['Product', 'Quantity', 'Price'],
+    [
+        'Quantity' => 'c', // Center align Quantity
+        'Price' => 'r'     // Right align Price
+    ]
+);
+$table->addRow(['Laptop', 2, 1200.50]);
+$table->addRow(['Mouse', 5, 25.00]);
+$table->addRow(['Keyboard', 1, 75.99]);
 
-// Apply a predefined style (e.g., 'compact')
-$table->setStyle('compact');
-echo "\nCompact Style:\n";
+echo "Default Style:\n";
+$table->setStyle('default');
 echo $table;
 
-// Apply another predefined style (e.g., 'unicode-single-line')
-$table->setStyle('unicode-single-line');
+echo "\nCompact Style:\n";
+$table->setStyle('compact');
+echo $table;
+
 echo "\nUnicode Single Line Style:\n";
+$table->setStyle('unicode-single-line');
 echo $table;
 
 // Define and apply a custom style
-$ugly_chaos_style = new TableStyle(
-    'O',
-    ['!', 'X', '$', '@'],
-    ['O', 'X', '#', 'O'],
-    ['O', 'X', '$', 'O'],
-    ['%', 'X', '$', '&']
+$custom_style = new TableStyle(
+    '¦', // Vertical separator (light vertical bar)
+    ['╭', '─', '┬', '╮'], // Top border (rounded corners)
+    ['├', '─', '┼', '┤'], // Header separator (light lines)
+    ['¦', '┄', '┼', '¦'], // Row separator (dashed horizontal, light vertical)
+    ['╰', '─', '┴', '╯']  // Bottom border (rounded corners)
 );
-TableStyleRegistry::register('ugly-chaos', $ugly_chaos_style);
+TableStyleRegistry::register('custom-fancy', $custom_style);
 
-$table->setStyle('ugly-chaos');
-echo "\nCustom 'Ugly Chaos' Style:\n";
+echo "\nCustom 'Fancy' Style:\n";
+$table->setStyle('custom-fancy');
 echo $table;
+```
+
+This will output:
+
+```
+Default Style:
++----------+----------+--------+
+| Product  | Quantity |  Price |
++----------+----------+--------+
+| Laptop   |    2     | 1200.5 |
+| Mouse    |    5     |     25 |
+| Keyboard |    1     |  75.99 |
++----------+----------+--------+
+
+Compact Style:
+  Product    Quantity    Price 
+ ---------- ---------- -------- 
+  Laptop        2       1200.5 
+  Mouse         5           25 
+  Keyboard      1        75.99 
+
+Unicode Single Line Style:
+┌──────────┬──────────┬────────┐
+│ Product  │ Quantity │  Price │
+├──────────┼──────────┼────────┤
+│ Laptop   │    2     │ 1200.5 │
+│ Mouse    │    5     │     25 │
+│ Keyboard │    1     │  75.99 │
+└──────────┴──────────┴────────┘
+
+Custom 'Fancy' Style:
+╭──────────┬──────────┬────────╮
+¦ Product  ¦ Quantity ¦  Price ¦
+├──────────┼──────────┼────────┤
+¦ Laptop   ¦    2     │ 1200.5 ¦
+¦ Mouse    ¦    5     │     25 ¦
+¦ Keyboard │    1     │  75.99 ¦
+╰──────────┴──────────┴────────╯
 ```
 
 ### Importing Data
