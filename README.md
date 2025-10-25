@@ -34,11 +34,13 @@ src/
     +-- Importers/                 # Concrete implementations for importing various formats
     |   +-- CsvTableImporter.php
     |   +-- JsonTableImporter.php
+    |   +-- MarkdownTableImporter.php
     |   \-- XmlTableImporter.php
     \-- Exporters/                 # Concrete implementations for exporting to various formats
         +-- CsvTableExporter.php
         +-- HtmlTableExporter.php
         +-- JsonTableExporter.php
+        +-- MarkdownTableExporter.php
         \-- XmlTableExporter.php
 ```
 
