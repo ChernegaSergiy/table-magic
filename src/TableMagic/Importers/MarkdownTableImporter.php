@@ -23,7 +23,10 @@ class MarkdownTableImporter implements TableImporterInterface
 
         // Extract alignments from separator line
         $separatorLine = array_shift($lines);
-        $alignments = $this->parseAlignment($separatorLine, $headers);
+        $alignments = [];
+        if ($separatorLine !== null) {
+            $alignments = $this->parseAlignment($separatorLine, $headers);
+        }
 
         $table = new Table($headers, $alignments);
 
