@@ -11,12 +11,12 @@ class CsvTableExporter implements TableExporterInterface
     /**
      * Exports a Table object to a CSV string representation.
      *
-     * @param Table $table The Table object to export.
+     * @param  Table  $table  The Table object to export.
      * @return string The CSV string representation of the table.
      *
      * @throws Exception If an error occurs during CSV conversion.
      */
-    public function export(Table $table): string
+    public function export(Table $table) : string
     {
         $output = $this->openTemporaryStream();
         if (false === $output) {

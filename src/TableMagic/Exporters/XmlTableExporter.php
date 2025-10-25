@@ -12,12 +12,12 @@ class XmlTableExporter implements TableExporterInterface
     /**
      * Exports a Table object to an XML string representation.
      *
-     * @param Table $table The Table object to export.
+     * @param  Table  $table  The Table object to export.
      * @return string The XML string representation of the table.
      *
      * @throws Exception If an error occurs during XML conversion.
      */
-    public function export(Table $table): string
+    public function export(Table $table) : string
     {
         $xml = $this->createSimpleXMLElement('<table/>');
 
