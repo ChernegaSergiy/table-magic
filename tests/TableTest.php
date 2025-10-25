@@ -1,6 +1,8 @@
 <?php
 
 use ChernegaSergiy\TableMagic\Table;
+use ChernegaSergiy\TableMagic\TableStyle;
+use ChernegaSergiy\TableMagic\TableStyleRegistry;
 use PHPUnit\Framework\TestCase;
 
 class TableTest extends TestCase
@@ -153,5 +155,114 @@ class TableTest extends TestCase
         $this->expectExceptionMessage('Row index 0 is invalid.');
         $table = new Table(['Name']);
         $table->deleteRow(0);
+    }
+
+    public function testSetStyle()
+    {
+        $table = new Table(['Name', 'Age']);
+        $table->addRow(['Alice', 30]);
+
+        // Test default style
+        $table->setStyle('default');
+        $default_output = $table->getTable();
+        $this->assertStringContainsString('+-------', $default_output);
+        $this->assertStringContainsString('| Name  |', $default_output);
+
+        // Test GitHub Markdown style
+        $table->setStyle('github-markdown');
+        $markdown_output = $table->getTable();
+        $this->assertStringStartsNotWith('+', $markdown_output);
+        $this->assertStringContainsString('| Name  |', $markdown_output);
+        $this->assertStringContainsString('|-------|', $markdown_output);
+        $this->assertStringNotContainsString('+-------', $markdown_output);
+
+        // Test Unicode Single Line style
+        $table->setStyle('unicode-single-line');
+        $unicode_output = $table->getTable();
+        $this->assertStringContainsString('┌───────', $unicode_output);
+        $this->assertStringContainsString('│ Name  │', $unicode_output);
+        $this->assertStringContainsString('├───────', $unicode_output);
+        $this->assertStringContainsString('└───────', $unicode_output);
+
+        // Test reStructuredTextGrid style
+        $table->setStyle('restructured-text-grid');
+        $rst_output = $table->getTable();
+        $this->assertStringContainsString('+=======+', $rst_output);
+
+        // Test unicodeDoubleLine style
+        $table->setStyle('unicode-double-line');
+        $double_output = $table->getTable();
+        $this->assertStringContainsString('╔═══════', $double_output);
+
+        // Test dots style
+        $table->setStyle('dots');
+        $dots_output = $table->getTable();
+        $this->assertStringContainsString('.........', $dots_output);
+        $this->assertStringContainsString(': Name  :', $dots_output);
+
+        // Test compact style
+        $table->setStyle('compact');
+        $compact_output = $table->getTable();
+        $this->assertStringStartsWith('  ', $compact_output); // Starts with two spaces due to vertical separator being a space
+        $this->assertStringContainsString('  Name    Age  ', $compact_output); // Header line
+        $this->assertStringContainsString(' ------- ----- ', $compact_output); // Separator line
+        $this->assertStringNotContainsString('|', $compact_output); // No vertical lines
+        $this->assertStringNotContainsString('+', $compact_output); // No cross characters
+
+        // Test reStructuredText Simple style
+        $table->setStyle('restructured-text-simple');
+        $rst_simple_output = $table->getTable();
+        $this->assertStringContainsString(' ======= ===== ', $rst_simple_output);
+        $this->assertStringContainsString('  Name    Age  ', $rst_simple_output);
+        $this->assertStringNotContainsString('|', $rst_simple_output);
+        $this->assertStringNotContainsString('+', $rst_simple_output);
+
+        // Test reddit-markdown style
+        $table->setStyle('reddit-markdown');
+        $reddit_output = $table->getTable();
+        $this->assertStringStartsWith('|', $reddit_output);
+        $this->assertStringContainsString(' Name  | Age ', $reddit_output); // Header line
+        $this->assertStringContainsString(' -------|----- ', $reddit_output); // Separator line
+
+        // Test rounded style
+        $table->setStyle('rounded');
+        $rounded_output = $table->getTable();
+        $this->assertStringContainsString('.-------.', $rounded_output);
+        $this->assertStringContainsString('| Name  | Age |', $rounded_output);
+        $this->assertStringContainsString(':-------+-----:', $rounded_output);
+        $this->assertStringContainsString('\'-------\'-----\'', $rounded_output);
+    }
+
+    public function testCustomStyleRegistration()
+    {
+        $ugly_chaos_style = new TableStyle(
+            'O',
+            ['!', 'X', '$', '@'],
+            ['O', 'X', '#', 'O'],
+            ['O', 'X', '$', 'O'],
+            ['%', 'X', '$', '&']
+        );
+        TableStyleRegistry::register('ugly-chaos', $ugly_chaos_style);
+
+        $table = new Table(['Name', 'Age']);
+        $table->addRow(['Alice', 30]);
+        $table->setStyle('ugly-chaos');
+
+        $output = $table->getTable();
+
+        $this->assertMatchesRegularExpression('/!XXXXXXX\$XXXXX@\r?\n/', $output);
+        $this->assertStringContainsString("O Name  O Age O", $output);
+        $this->assertStringContainsString("OXXXXXXX#XXXXXO", $output);
+        $this->assertStringContainsString("O Alice O 30  O", $output);
+        $this->assertMatchesRegularExpression('/%XXXXXXX\$XXXXX&\r?\n?$/', $output);
+    }
+
+    public function testGetInvalidStyleThrowsException()
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Style "non-existent-style" is not registered.');
+
+        $table = new Table();
+        $table->setStyle('non-existent-style');
     }
 }
