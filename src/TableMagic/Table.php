@@ -32,6 +32,16 @@ class Table
         return $this->col_widths;
     }
 
+    /**
+     * Returns the column alignments.
+     *
+     * @return array<int, string> The column alignments.
+     */
+    public function getAlignments() : array
+    {
+        return $this->alignments;
+    }
+
     /** @var array<int, string> */
     private array $alignments = [];
 

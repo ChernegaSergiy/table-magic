@@ -11,7 +11,7 @@
 - **Customizable Column Alignments**: Align columns to the left, right, or center.
 - **UTF-8 Support**: Properly display non-ASCII characters.
 - **Sorting Capability**: Sort tables by any column in ascending or descending order.
-- **Export and Import Options**: Import data from CSV, JSON, and XML formats, and export to HTML, CSV, JSON, and XML using a flexible, object-oriented approach with dedicated importer and exporter classes.
+- **Export and Import Options**: Import data from CSV, JSON, XML, and Markdown formats, and export to HTML, CSV, JSON, XML, and Markdown using a flexible, object-oriented approach with dedicated importer and exporter classes.
 - **Customizable Table Styles**: Apply various predefined styles or define your own for unique table appearances.
 - **Terminal Interaction**: Paginate through large tables in the console.
 
@@ -215,6 +215,9 @@ $table_from_json = $importer->import($json_data, 'json');
 $xml_data = '<root><headers><header>Name</header><header>Age</header></headers><rows><row><Name>Eve</Name><Age>30</Age></row></rows></root>';
 $table_from_xml = $importer->import($xml_data, 'xml');
 
+$markdown_data = "| Name | Age |\n|:---|---:|\n| Frank | 40 |\n| Grace | 35 |";
+$table_from_markdown = $importer->import($markdown_data, 'markdown');
+
 // You can also directly use specific importer classes:
 use ChernegaSergiy\TableMagic\Importers\CsvTableImporter;
 $csvImporter = new CsvTableImporter();
@@ -235,6 +238,7 @@ $html_output = $exporter->export('html');
 $csv_output = $exporter->export('csv');
 $json_output = $exporter->export('json');
 $xml_output = $exporter->export('xml');
+$markdown_output = $exporter->export('markdown');
 
 // You can also directly use specific exporter classes:
 use ChernegaSergiy\TableMagic\Exporters\HtmlTableExporter;
