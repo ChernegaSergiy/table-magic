@@ -35,7 +35,7 @@ class TableStyle
      *
      * @param string $vertical
      * @param array<int, string> $top
-     * @param array<int, string> $header
+     * @param array{0: string, 1: string, 2: string, 3: string} $header
      * @param array<int, string> $row
      * @param array<int, string> $bottom
      */
@@ -49,22 +49,25 @@ class TableStyle
         $this->vertical = $vertical;
 
         $this->hasTopBorder = !empty($top);
-        if ($this->hasTopBorder) {
-            [$this->topLeft, $this->topHorizontal, $this->topIntersection, $this->topRight] = $top;
-        }
+        $this->topLeft = $top[0] ?? '';
+        $this->topHorizontal = $top[1] ?? '';
+        $this->topIntersection = $top[2] ?? '';
+        $this->topRight = $top[3] ?? '';
 
         // Header separator is mandatory
         [$this->headerLeft, $this->headerHorizontal, $this->headerIntersection, $this->headerRight] = $header;
 
         $this->hasRowSeparator = !empty($row);
-        if ($this->hasRowSeparator) {
-            [$this->rowLeft, $this->rowHorizontal, $this->rowIntersection, $this->rowRight] = $row;
-        }
+        $this->rowLeft = $row[0] ?? '';
+        $this->rowHorizontal = $row[1] ?? '';
+        $this->rowIntersection = $row[2] ?? '';
+        $this->rowRight = $row[3] ?? '';
 
         $this->hasBottomBorder = !empty($bottom);
-        if ($this->hasBottomBorder) {
-            [$this->bottomLeft, $this->bottomHorizontal, $this->bottomIntersection, $this->bottomRight] = $bottom;
-        }
+        $this->bottomLeft = $bottom[0] ?? '';
+        $this->bottomHorizontal = $bottom[1] ?? '';
+        $this->bottomIntersection = $bottom[2] ?? '';
+        $this->bottomRight = $bottom[3] ?? '';
     }
 
     public function getVertical(): string
