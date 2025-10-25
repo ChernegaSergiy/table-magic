@@ -5,6 +5,8 @@ require_once __DIR__ . '/../vendor/autoload.php'; // Include Composer autoload
 use ChernegaSergiy\TableMagic\Table;
 use ChernegaSergiy\TableMagic\TableExporter;
 use ChernegaSergiy\TableMagic\TableImporter;
+use ChernegaSergiy\TableMagic\TableStyle;
+use ChernegaSergiy\TableMagic\TableStyleRegistry;
 
 // Table headers
 $headers = ['Employee ID', 'Name', 'Department', 'Performance Score', 'Review Date'];
@@ -50,21 +52,21 @@ $table->setAlignments([
 echo "\n\nTable with New Alignments:\n";
 echo $table;
 
-// Set alignment for a specific column
-$table->setAlignment('Department', 'l'); // Change alignment for Department
-$table->setAlignment('Performance Score', 'c'); // Change alignment for Performance Score
+// Set alignment for specific columns
+$table->setAlignment('Department', 'l');
+$table->setAlignment('Performance Score', 'c');
 
 echo "\n\nTable with Specific Column Alignments:\n";
 echo $table;
 
-// Add more rows to the table
+// Add more rows
 $table->addRow([1006, 'Frank Castle', 'IT', 95, '2024-07-01']);
 $table->addRow([1007, 'Grace Johnson', 'Finance', 80, '2024-07-03']);
 
 echo "\n\nTable After Adding More Rows:\n";
 echo $table;
 
-// Sort the table by the new column (Department)
+// Sort by Department
 $table->sortTable('Department');
 echo "\n\nSorted by Department:\n";
 echo $table;
@@ -78,17 +80,82 @@ $data_json = json_encode([
     ],
 ]);
 
-// Creating a new importer
 $table_importer = new TableImporter();
-$table = $table_importer->import($data_json, 'json'); // Import from JSON
+$table = $table_importer->import($data_json, 'json');
 
-// Output of the imported table
 echo "\n\nTable After Importing Data from JSON:\n";
 echo $table;
 
-// Example of exporting the table to CSV
+// Export table to CSV
 $table_exporter = new TableExporter($table);
 $csv_output = $table_exporter->export('csv');
-file_put_contents('table_output.csv', $csv_output); // Save to file
+file_put_contents('table_output.csv', $csv_output);
 
 echo "\n\nTable exported to CSV file 'table_output.csv'.\n";
+
+// --- Style Demonstrations ---
+echo "\n\n--- Style Demonstrations ---\n";
+
+// Compact Style
+echo "\nCompact Style:\n";
+$table->setStyle('compact');
+echo $table;
+
+// Default Style
+echo "\nDefault Style:\n";
+$table->setStyle('default');
+echo $table;
+
+// Dots Style
+echo "\nDots Style:\n";
+$table->setStyle('dots');
+echo $table;
+
+// GitHub Markdown Style
+echo "\nGitHub Markdown Style:\n";
+$table->setStyle('github-markdown');
+echo $table;
+
+// Rounded Style
+echo "\nRounded Style:\n";
+$table->setStyle('rounded');
+echo $table;
+
+// Reddit Markdown Style
+echo "\nReddit Markdown Style:\n";
+$table->setStyle('reddit-markdown');
+echo $table;
+
+// reStructuredTextGrid Style
+echo "\nreStructuredTextGrid Style:\n";
+$table->setStyle('restructured-text-grid');
+echo $table;
+
+// reStructuredText Simple Style
+echo "\nreStructuredText Simple Style:\n";
+$table->setStyle('restructured-text-simple');
+echo $table;
+
+// Unicode Double Line Style
+echo "\nUnicode Double Line Style:\n";
+$table->setStyle('unicode-double-line');
+echo $table;
+
+// Unicode Single Line Style
+echo "\nUnicode Single Line Style:\n";
+$table->setStyle('unicode-single-line');
+echo $table;
+
+// Custom 'Ugly Chaos' Style
+echo "\nCustom 'Ugly Chaos' Style:\n";
+$ugly_chaos_style = new TableStyle(
+    '!',
+    ['<', '-', '>', '>'],
+    ['!', '=', 'X', '!'],
+    ['!', '-', ' ', '!'],
+    ['<', '-', '>', '>']
+);
+TableStyleRegistry::register('ugly-chaos', $ugly_chaos_style);
+$table->setStyle('ugly-chaos');
+echo $table;
+

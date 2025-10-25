@@ -3,6 +3,8 @@
 namespace ChernegaSergiy\TableMagic;
 
 use Exception;
+use ChernegaSergiy\TableMagic\TableStyle;
+use ChernegaSergiy\TableMagic\TableStyleRegistry;
 
 class Table
 {
@@ -17,6 +19,8 @@ class Table
 
     /** @var array<int, int> */
     public array $col_widths = [];
+
+    private TableStyle $style;
 
     /**
      * Returns the column widths.
@@ -39,9 +43,24 @@ class Table
      */
     public function __construct(array $headers = [], array $alignments = [])
     {
+        $this->style = TableStyleRegistry::get('default');
         $this->headers = $headers;
         $this->setAlignments($alignments);
         $this->updateColWidths($headers);
+    }
+
+    /**
+     * Sets the visual style of the table.
+     *
+     * @param string|TableStyle $style The style name or a TableStyle instance.
+     */
+    public function setStyle($style): void
+    {
+        if (is_string($style)) {
+            $style = TableStyleRegistry::get($style);
+        }
+
+        $this->style = $style;
     }
 
     /**
@@ -126,20 +145,48 @@ class Table
             return 'Empty table';
         }
 
-        $table = $this->drawLine();
+        $table = '';
+
+        if ($this->style->hasTopBorder()) {
+            $table .= $this->drawLine(
+                $this->style->getTopLeft(),
+                $this->style->getTopHorizontal(),
+                $this->style->getTopIntersection(),
+                $this->style->getTopRight()
+            );
+        }
+
         $table .= $this->formatRow($this->headers, STR_PAD_BOTH);
-        $table .= $this->drawLine();
+
+        $table .= $this->drawLine(
+            $this->style->getHeaderLeft(),
+            $this->style->getHeaderHorizontal(),
+            $this->style->getHeaderIntersection(),
+            $this->style->getHeaderRight()
+        );
 
         foreach ($this->rows as $i => $row) {
             $table .= $this->formatRow($row);
-            if ($this->dividers[$i] ?? false) {
-                $table .= $this->drawLine();
+            if (($this->dividers[$i] ?? false) && $this->style->hasRowSeparator()) {
+                $table .= $this->drawLine(
+                    $this->style->getRowLeft(),
+                    $this->style->getRowHorizontal(),
+                    $this->style->getRowIntersection(),
+                    $this->style->getRowRight()
+                );
             }
         }
 
-        $table .= $this->drawLine();
+        if ($this->style->hasBottomBorder()) {
+            $table .= $this->drawLine(
+                $this->style->getBottomLeft(),
+                $this->style->getBottomHorizontal(),
+                $this->style->getBottomIntersection(),
+                $this->style->getBottomRight()
+            );
+        }
 
-        return $table;
+        return ltrim($table, PHP_EOL);
     }
 
     /**
@@ -212,12 +259,13 @@ class Table
      */
     protected function formatRow(array $row, int $pad_type = STR_PAD_RIGHT) : string
     {
-        return '|' . implode('|', array_map(function ($value, $i) use ($pad_type) {
+        $vertical = $this->style->getVertical();
+        return $vertical . implode($vertical, array_map(function ($value, $i) use ($pad_type) {
             $align = $this->alignments[$i] ?? 'l';
             $pad_type = 'r' === $align ? STR_PAD_LEFT : ('c' === $align ? STR_PAD_BOTH : $pad_type);
 
             return ' ' . $this->mbStrPad($value, $this->col_widths[$i] ?? 0, ' ', $pad_type) . ' ';
-        }, $row, array_keys($this->headers))) . '|' . PHP_EOL;
+        }, $row, array_keys($this->headers))) . $vertical . PHP_EOL;
     }
 
     /**
@@ -238,9 +286,9 @@ class Table
      *
      * @return string The drawn line as a string.
      */
-    protected function drawLine() : string
+    protected function drawLine(string $left, string $horizontal, string $intersection, string $right): string
     {
-        return '+' . implode('+', array_map(fn ($width) => str_repeat('-', $width + 2), $this->col_widths)) . '+' . PHP_EOL;
+        return $left . implode($intersection, array_map(fn($width) => str_repeat($horizontal, $width + 2), $this->col_widths)) . $right . PHP_EOL;
     }
 
     /**
