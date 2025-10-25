@@ -12,6 +12,7 @@
 - **UTF-8 Support**: Properly display non-ASCII characters.
 - **Sorting Capability**: Sort tables by any column in ascending or descending order.
 - **Export and Import Options**: Import data from CSV, JSON, and XML formats, and export to HTML, CSV, JSON, and XML using a flexible, object-oriented approach with dedicated importer and exporter classes.
+- **Customizable Table Styles**: Apply various predefined styles or define your own for unique table appearances.
 - **Terminal Interaction**: Paginate through large tables in the console.
 
 ## Repository Structure
@@ -24,6 +25,8 @@ src/
     +-- Table.php
     +-- TableExporter.php
     +-- TableImporter.php
+    +-- TableStyle.php
+    +-- TableStyleRegistry.php
     +-- TerminalInteraction.php
     +-- Interfaces/                # Defines contracts for importers and exporters
     |   +-- TableImporterInterface.php
@@ -100,6 +103,41 @@ Sorted by Performance Score (Descending):
 |        1003 | Carol Martinez | Engineering |                88 | 2024-06-20  |
 |        1001 | Alice Thompson | Marketing   |                85 | 2024-06-15  |
 +-------------+----------------+-------------+-------------------+-------------+
+```
+
+```php
+require_once 'vendor/autoload.php';
+
+use ChernegaSergiy\TableMagic\Table;
+use ChernegaSergiy\TableMagic\TableStyle;
+use ChernegaSergiy\TableMagic\TableStyleRegistry;
+
+$table = new Table(['Name', 'Age']);
+$table->addRow(['Alice', 30]);
+
+// Apply a predefined style (e.g., 'compact')
+$table->setStyle('compact');
+echo "\nCompact Style:\n";
+echo $table;
+
+// Apply another predefined style (e.g., 'unicode-single-line')
+$table->setStyle('unicode-single-line');
+echo "\nUnicode Single Line Style:\n";
+echo $table;
+
+// Define and apply a custom style
+$ugly_chaos_style = new TableStyle(
+    'O',
+    ['!', 'X', '$', '@'],
+    ['O', 'X', '#', 'O'],
+    ['O', 'X', '$', 'O'],
+    ['%', 'X', '$', '&']
+);
+TableStyleRegistry::register('ugly-chaos', $ugly_chaos_style);
+
+$table->setStyle('ugly-chaos');
+echo "\nCustom 'Ugly Chaos' Style:\n";
+echo $table;
 ```
 
 ### Importing Data
