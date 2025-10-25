@@ -63,7 +63,7 @@ class TerminalInteractionTest extends TestCase
 
         $output = $this->getOutput();
         $this->assertStringContainsString('Page 1 of 0', $output);
-        $this->assertStringContainsString("Enter 'n' for next page, 'p' for previous page, a page number, 'e' to edit a row, 'a' to add a row, 'd' to delete a row, 'x' to export, or 'q' to quit:", $output);
+        $this->assertStringContainsString("Enter 'n' for next page, 'p' for previous page, a page number, 'e' to edit a row, 'a' to add a row, 'd' to delete a row, 's' to sort, 'x' to export, or 'q' to quit:", $output);
     }
 
     public function testDisplayCurrentPage()
@@ -322,20 +322,7 @@ class TerminalInteractionTest extends TestCase
         $this->assertStringContainsString('Alice', $output);
     }
 
-    public function testSetAlignmentNonExistentColumn()
-    {
-        $table = new Table(['Header1', 'Header2']);
-        $table->setAlignment('NonExistent', 'c');
 
-        // Access private property using reflection for testing
-        $reflection = new \ReflectionClass($table);
-        $alignments_property = $reflection->getProperty('alignments');
-        $alignments_property->setAccessible(true);
-        $alignments = $alignments_property->getValue($table);
-
-        // Expect the last column's alignment to be set to 'c'
-        $this->assertEquals('c', $alignments[count($table->headers) - 1]);
-    }
 
 
     public function testEditRowNoChangesMade()
@@ -515,4 +502,133 @@ class TerminalInteractionTest extends TestCase
         $this->assertEquals("Name,Age\nAlice,30\n", file_get_contents($this->test_file));
     }
 
-}
+    public function testRunSortTable()
+    {
+        $table = new Table(['Name', 'Age']);
+        $table->addRow(['Charlie', '35']);
+        $table->addRow(['Alice', '30']);
+        $table->addRow(['Bob', '24']);
+
+        $this->setInput("s\nName\nasc\nq\n"); // Sort by Name ascending, then quit
+
+        $interaction = new TerminalInteraction($table, 5, $this->input_stream, $this->output_stream, null);
+        $interaction->run();
+
+        $output = $this->getOutput();
+        $this->assertStringContainsString('Table sorted by \'Name\' in ascending order.', $output);
+        $this->assertStringContainsString("Alice", $output);
+        $this->assertStringContainsString("Bob", $output);
+        $this->assertStringContainsString("Charlie", $output);
+
+        // Extract the last rendered table for order verification
+        $last_table_header_start = strrpos($output, '|  Name   | Age |');
+        $relevant_output = substr($output, $last_table_header_start);
+
+        // Verify order (this is a bit tricky with string contains, but we can check relative positions)
+        $alice_pos = strpos($relevant_output, 'Alice');
+        $bob_pos = strpos($relevant_output, 'Bob');
+        $charlie_pos = strpos($relevant_output, 'Charlie');
+
+        $this->assertTrue($alice_pos < $bob_pos);
+        $this->assertTrue($bob_pos < $charlie_pos);
+
+        // Reset input and output streams for the next interaction
+        rewind($this->input_stream);
+        ftruncate($this->input_stream, 0);
+        rewind($this->output_stream);
+        ftruncate($this->output_stream, 0);
+
+        $table_desc = new Table(['Name', 'Age']);
+        $table_desc->addRow(['Charlie', '35']);
+        $table_desc->addRow(['Alice', '30']);
+        $table_desc->addRow(['Bob', '24']);
+
+        $this->setInput("s\nAge\ndesc\nq\n"); // Sort by Age descending, then quit
+
+        $interaction_desc = new TerminalInteraction($table_desc, 5, $this->input_stream, $this->output_stream, null);
+        $interaction_desc->run();
+
+        $output = $this->getOutput();
+        $this->assertStringContainsString('Table sorted by \'Age\' in descending order.', $output);
+
+        // Extract the last rendered table for order verification
+        $last_table_header_start = strrpos($output, '|  Name   | Age |');
+        $relevant_output = substr($output, $last_table_header_start);
+
+        $charlie_pos = strpos($relevant_output, 'Charlie');
+        $alice_pos = strpos($relevant_output, 'Alice');
+        $bob_pos = strpos($relevant_output, 'Bob');
+
+        $this->assertTrue($charlie_pos < $alice_pos);
+        $this->assertTrue($alice_pos < $bob_pos);
+    }
+
+    public function testSortTableFgetsReturnsFalseForColumnName()
+    {
+        $table = new Table(['Name', 'Age']);
+        $table->addRow(['Alice', '30']);
+
+        $this->setInput("s\n"); // Enter 's', then simulate false for column name input
+        $interaction = new TerminalInteraction($table, 5, $this->input_stream, $this->output_stream, null);
+        $interaction->run();
+
+        $output = $this->getOutput();
+        $this->assertStringContainsString('Enter the column name to sort by:', $output);
+        $this->assertStringNotContainsString('Table sorted by', $output);
+    }
+
+    public function testSortTableInvalidColumnName()
+    {
+        $table = new Table(['Name', 'Age']);
+        $table->addRow(['Alice', '30']);
+
+        $this->setInput("s\nInvalidColumn\nq\n"); // Enter 's', then invalid column name, then quit
+        $interaction = new TerminalInteraction($table, 5, $this->input_stream, $this->output_stream, null);
+        $interaction->run();
+
+        $output = $this->getOutput();
+        $this->assertStringContainsString('Invalid column name.', $output);
+        $this->assertStringNotContainsString('Table sorted by', $output);
+    }
+
+    public function testSortTableFgetsReturnsFalseForSortOrder()
+    {
+        $table = new Table(['Name', 'Age']);
+        $table->addRow(['Alice', '30']);
+
+        $this->setInput("s\nName\nq\n"); // Enter 's', then valid column name, then simulate false for sort order input, then quit
+        $interaction = new TerminalInteraction($table, 5, $this->input_stream, $this->output_stream, null);
+        $interaction->run();
+
+        $output = $this->getOutput();
+        $this->assertStringContainsString('Enter sort order (asc/desc, default asc):', $output);
+        $this->assertStringContainsString('Table sorted by \'Name\' in ascending order.', $output);
+    }
+
+    public function testSortTableInvalidSortOrderDefaultsToAsc()
+    {
+        $table = new Table(['Name', 'Age']);
+        $table->addRow(['Alice', '30']);
+
+        $this->setInput("s\nName\ninvalid\nq\n"); // Enter 's', then valid column name, then invalid sort order, then quit
+        $interaction = new TerminalInteraction($table, 5, $this->input_stream, $this->output_stream, null);
+        $interaction->run();
+
+        $output = $this->getOutput();
+                $this->assertStringContainsString('Table sorted by \'Name\' in ascending order.', $output);
+            }
+        
+            public function testSortTableFgetsReturnsFalseForSortOrderInput()
+            {
+                $table = new Table(['Name', 'Age']);
+                $table->addRow(['Alice', '30']);
+        
+                $this->setInput("s\nName\n"); // Enter 's', then valid column name, then simulate false for sort order input
+                $interaction = new TerminalInteraction($table, 5, $this->input_stream, $this->output_stream, null);
+                $interaction->run();
+        
+                $output = $this->getOutput();
+                $this->assertStringContainsString('Enter sort order (asc/desc, default asc):', $output);
+                $this->assertStringNotContainsString('Table sorted by', $output);
+            }
+        }

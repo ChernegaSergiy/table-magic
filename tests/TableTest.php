@@ -257,6 +257,21 @@ class TableTest extends TestCase
         $this->assertMatchesRegularExpression('/%XXXXXXX\$XXXXX&\r?\n?$/', $output);
     }
 
+    public function testSetAlignmentNonExistentColumn()
+    {
+        $table = new Table(['Header1', 'Header2']);
+        $table->setAlignment('NonExistent', 'c');
+
+        // Access private property using reflection for testing
+        $reflection = new \ReflectionClass($table);
+        $alignments_property = $reflection->getProperty('alignments');
+        $alignments_property->setAccessible(true);
+        $alignments = $alignments_property->getValue($table);
+
+        // Expect the last column's alignment to be set to 'c'
+        $this->assertEquals('c', $alignments[count($table->headers) - 1]);
+    }
+
     public function testGetInvalidStyleThrowsException()
     {
         $this->expectException(InvalidArgumentException::class);
