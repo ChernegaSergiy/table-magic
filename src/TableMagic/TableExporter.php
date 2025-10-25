@@ -5,6 +5,7 @@ namespace ChernegaSergiy\TableMagic;
 use ChernegaSergiy\TableMagic\Exporters\CsvTableExporter;
 use ChernegaSergiy\TableMagic\Exporters\HtmlTableExporter;
 use ChernegaSergiy\TableMagic\Exporters\JsonTableExporter;
+use ChernegaSergiy\TableMagic\Exporters\MarkdownTableExporter;
 use ChernegaSergiy\TableMagic\Exporters\XmlTableExporter;
 use Exception;
 
@@ -41,6 +42,9 @@ class TableExporter
                 break;
             case 'json':
                 $exporter = new JsonTableExporter();
+                break;
+            case 'markdown':
+                $exporter = new MarkdownTableExporter();
                 break;
             case 'xml':
                 $exporter = new XmlTableExporter();

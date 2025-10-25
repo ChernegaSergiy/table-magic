@@ -42,6 +42,10 @@ class TableExporterTest extends TestCase
         // Test XML
         $expectedXml = '<?xml version="1.0"?><table><headers><header>Name</header><header>Age</header></headers><rows><row><Name>Alice</Name><Age>30</Age></row><row><Name>Bob</Name><Age>25</Age></row></rows></table>';
         $this->assertXmlStringEqualsXmlString($expectedXml, $exporter->export('xml'));
+
+        // Test Markdown
+        $expectedMarkdown = "| Name | Age |\n|:---|:---|\n| Alice | 30 |\n| Bob | 25 |";
+        $this->assertEquals($expectedMarkdown, $exporter->export('markdown'));
     }
 
     public function testExportWithUnsupportedFormatThrowsException()

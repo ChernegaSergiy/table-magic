@@ -36,6 +36,14 @@ class TableImporterTest extends TestCase
         $this->assertInstanceOf(Table::class, $table_xml);
         $this->assertEquals(['Name', 'Age'], $table_xml->headers);
         $this->assertEquals([['Charlie', '35']], $table_xml->getRows());
+
+        // Test Markdown
+        $markdown_data = "| Name | Age |\n|:---|:---|
+| David | 40 |";
+        $table_markdown = $importer->import($markdown_data, 'markdown');
+        $this->assertInstanceOf(Table::class, $table_markdown);
+        $this->assertEquals(['Name', 'Age'], $table_markdown->headers);
+        $this->assertEquals([['David', '40']], $table_markdown->getRows());
     }
 
     public function testImportWithUnsupportedFormatThrowsException()

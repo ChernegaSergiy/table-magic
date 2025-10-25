@@ -4,6 +4,7 @@ namespace ChernegaSergiy\TableMagic;
 
 use ChernegaSergiy\TableMagic\Importers\CsvTableImporter;
 use ChernegaSergiy\TableMagic\Importers\JsonTableImporter;
+use ChernegaSergiy\TableMagic\Importers\MarkdownTableImporter;
 use ChernegaSergiy\TableMagic\Importers\XmlTableImporter;
 use Exception;
 
@@ -26,6 +27,9 @@ class TableImporter
                 break;
             case 'json':
                 $importer = new JsonTableImporter();
+                break;
+            case 'markdown':
+                $importer = new MarkdownTableImporter();
                 break;
             case 'xml':
                 $importer = new XmlTableImporter();
