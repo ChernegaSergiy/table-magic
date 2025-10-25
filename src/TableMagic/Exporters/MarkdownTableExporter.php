@@ -13,7 +13,7 @@ class MarkdownTableExporter implements TableExporterInterface
      * @param  Table  $table  The Table object to export.
      * @return string The Markdown string representation of the table.
      */
-    public function export(Table $table): string
+    public function export(Table $table) : string
     {
         $lines = [];
 

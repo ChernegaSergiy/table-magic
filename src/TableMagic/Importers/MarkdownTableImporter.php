@@ -13,7 +13,7 @@ class MarkdownTableImporter implements TableImporterInterface
      * @param  string  $data  The Markdown table string to import.
      * @return Table The imported Table object.
      */
-    public function import(string $data): Table
+    public function import(string $data) : Table
     {
         $lines = array_map('trim', explode("\n", trim($data)));
 
@@ -38,21 +38,21 @@ class MarkdownTableImporter implements TableImporterInterface
     }
 
     /**
-     * @param string $line
+     * @param  string  $line
      * @return array<int, string>
      */
-    private function parseRow(string $line): array
+    private function parseRow(string $line) : array
     {
         $parts = explode('|', trim($line, '| '));
         return array_map('trim', $parts);
     }
 
     /**
-     * @param string $line
-     * @param array<int, string> $headers
+     * @param  string  $line
+     * @param  array<int, string>  $headers
      * @return array<string, string>
      */
-    private function parseAlignment(string $line, array $headers): array
+    private function parseAlignment(string $line, array $headers) : array
     {
         $alignments = [];
         $columns = explode('|', trim($line, '| '));
