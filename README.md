@@ -222,8 +222,8 @@ $table_from_markdown = $importer->import($markdown_data, 'markdown');
 
 // You can also directly use specific importer classes:
 use ChernegaSergiy\TableMagic\Importers\CsvTableImporter;
-$csvImporter = new CsvTableImporter();
-$table_direct_csv = $csvImporter->import($csv_data);
+$csv_importer = new CsvTableImporter();
+$table_direct_csv = $csv_importer->import($csv_data);
 ```
 
 ### Exporting Data
@@ -244,8 +244,8 @@ $markdown_output = $exporter->export('markdown');
 
 // You can also directly use specific exporter classes:
 use ChernegaSergiy\TableMagic\Exporters\HtmlTableExporter;
-$htmlExporter = new HtmlTableExporter();
-$direct_html_output = $htmlExporter->export($table_to_export);
+$html_exporter = new HtmlTableExporter();
+$direct_html_output = $html_exporter->export($table_to_export);
 ```
 
 ### Terminal Interaction
