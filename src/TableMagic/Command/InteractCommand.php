@@ -27,7 +27,11 @@ class InteractCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output) : int
     {
-        $file = (string) $input->getArgument('file');
+        $file = $input->getArgument('file');
+        if (! is_string($file)) {
+            $output->writeln('<error>Invalid file argument.</error>');
+            return Command::FAILURE;
+        }
 
         if (! file_exists($file) || ! is_readable($file)) {
             $output->writeln("<error>File not found or not readable: {$file}</error>");
@@ -35,9 +39,9 @@ class InteractCommand extends Command
         }
 
         $format = $input->getOption('format');
-        if (! $format) {
+        if (! is_string($format) || '' === $format) {
             $format = pathinfo($file, PATHINFO_EXTENSION);
-            if (! $format) {
+            if ('' === $format) {
                 $output->writeln('<error>Could not guess format from file extension. Please specify using --format.</error>');
                 return Command::FAILURE;
             }
@@ -51,14 +55,15 @@ class InteractCommand extends Command
 
         try {
             $importer = new TableImporter();
-            $table = $importer->import($data, strtolower((string) $format));
+            $table = $importer->import($data, strtolower($format));
 
             $style = $input->getOption('style');
-            if ($style) {
-                $table->setStyle((string) $style);
+            if (is_string($style) && '' !== $style) {
+                $table->setStyle($style);
             }
 
-            $rows_per_page = (int) $input->getOption('rows');
+            $rows_option = $input->getOption('rows');
+            $rows_per_page = is_numeric($rows_option) ? (int) $rows_option : 5;
 
             $output->writeln("<info>Starting interactive mode for {$file}...</info>");
 
