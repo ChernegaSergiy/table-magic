@@ -1,11 +1,23 @@
+<div align="center">
+
+<img src="public/logo-squircle.svg" alt="TableMagic" width="160" height="160" />
+
 # TableMagic
+
+*A powerful and flexible PHP library for creating and manipulating tables in console output.*
 
 [![Latest Stable Version](https://img.shields.io/packagist/v/chernegasergiy/table-magic.svg?label=Packagist&logo=packagist)](https://packagist.org/packages/chernegasergiy/table-magic)
 [![Total Downloads](https://img.shields.io/packagist/dt/chernegasergiy/table-magic.svg?label=Downloads&logo=packagist)](https://packagist.org/packages/chernegasergiy/table-magic)
-[![License](https://img.shields.io/packagist/l/chernegasergiy/table-magic.svg?label=Licence&logo=open-source-initiative)](https://packagist.org/packages/chernegasergiy/table-magic)
 [![Tests](https://img.shields.io/github/actions/workflow/status/ChernegaSergiy/table-magic/phpunit.yml?label=Tests&logo=github)](https://github.com/ChernegaSergiy/table-magic/actions/workflows/phpunit.yml)
 [![Test Coverage](https://img.shields.io/codecov/c/github/ChernegaSergiy/table-magic?label=Test%20Coverage&logo=codecov)](https://app.codecov.io/gh/ChernegaSergiy/table-magic)
 [![Static Analysis](https://img.shields.io/github/actions/workflow/status/ChernegaSergiy/table-magic/phpstan.yml?label=PHPStan&logo=github)](https://github.com/ChernegaSergiy/table-magic/actions/workflows/phpstan.yml)
+[![License](https://img.shields.io/packagist/l/chernegasergiy/table-magic.svg?label=Licence&logo=open-source-initiative)](https://packagist.org/packages/chernegasergiy/table-magic)
+
+[Features](#features) · [Installation](#installation) · [Usage](#usage) · [Styling](#table-styling) · [Import & Export](#importing-data) · [Contributing](#contributing)
+
+---
+
+</div>
 
 **TableMagic** is a powerful and flexible PHP library designed for creating and manipulating tables in console output. Inspired by Python's PrettyTable, TableMagic empowers developers to effortlessly display tabular data with customizable alignment, sorting, and styling options.
 
