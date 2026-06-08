@@ -2,8 +2,8 @@
 
 namespace Tests\Exporters;
 
-use ChernegaSergiy\TableMagic\Table;
 use ChernegaSergiy\TableMagic\Exporters\MarkdownTableExporter;
+use ChernegaSergiy\TableMagic\Table;
 use PHPUnit\Framework\TestCase;
 
 class MarkdownTableExporterTest extends TestCase

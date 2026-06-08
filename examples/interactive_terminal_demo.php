@@ -23,4 +23,3 @@ $interaction = new TerminalInteraction($table, 3);
 $interaction->run();
 
 echo "\nExited Terminal Interaction.\n";
-

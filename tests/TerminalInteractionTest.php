@@ -2,10 +2,10 @@
 
 namespace Tests;
 
-use ChernegaSergiy\TableMagic\TableExporter;
-use PHPUnit\Framework\TestCase;
 use ChernegaSergiy\TableMagic\Table;
+use ChernegaSergiy\TableMagic\TableExporter;
 use ChernegaSergiy\TableMagic\TerminalInteraction;
+use PHPUnit\Framework\TestCase;
 
 class TerminalInteractionTest extends TestCase
 {
@@ -14,7 +14,7 @@ class TerminalInteractionTest extends TestCase
 
     private string $test_file = 'test_output.csv';
 
-    protected function setUp(): void
+    protected function setUp() : void
     {
         $this->input_stream = fopen('php://memory', 'r+');
         $this->output_stream = fopen('php://memory', 'r+');
@@ -23,7 +23,7 @@ class TerminalInteractionTest extends TestCase
         }
     }
 
-    protected function tearDown(): void
+    protected function tearDown() : void
     {
         fclose($this->input_stream);
         fclose($this->output_stream);
@@ -32,13 +32,13 @@ class TerminalInteractionTest extends TestCase
         }
     }
 
-    private function setInput(string $input): void
+    private function setInput(string $input) : void
     {
         fwrite($this->input_stream, $input);
         rewind($this->input_stream);
     }
 
-    private function getOutput(): string
+    private function getOutput() : string
     {
         rewind($this->output_stream);
         return stream_get_contents($this->output_stream);
@@ -615,20 +615,20 @@ class TerminalInteractionTest extends TestCase
         $interaction->run();
 
         $output = $this->getOutput();
-                $this->assertStringContainsString('Table sorted by \'Name\' in ascending order.', $output);
-            }
-        
-            public function testSortTableFgetsReturnsFalseForSortOrderInput()
-            {
-                $table = new Table(['Name', 'Age']);
-                $table->addRow(['Alice', '30']);
-        
-                $this->setInput("s\nName\n"); // Enter 's', then valid column name, then simulate false for sort order input
-                $interaction = new TerminalInteraction($table, 5, $this->input_stream, $this->output_stream, null);
-                $interaction->run();
-        
-                $output = $this->getOutput();
-                $this->assertStringContainsString('Enter sort order (asc/desc, default asc):', $output);
-                $this->assertStringNotContainsString('Table sorted by', $output);
-            }
-        }
+        $this->assertStringContainsString('Table sorted by \'Name\' in ascending order.', $output);
+    }
+
+    public function testSortTableFgetsReturnsFalseForSortOrderInput()
+    {
+        $table = new Table(['Name', 'Age']);
+        $table->addRow(['Alice', '30']);
+
+        $this->setInput("s\nName\n"); // Enter 's', then valid column name, then simulate false for sort order input
+        $interaction = new TerminalInteraction($table, 5, $this->input_stream, $this->output_stream, null);
+        $interaction->run();
+
+        $output = $this->getOutput();
+        $this->assertStringContainsString('Enter sort order (asc/desc, default asc):', $output);
+        $this->assertStringNotContainsString('Table sorted by', $output);
+    }
+}

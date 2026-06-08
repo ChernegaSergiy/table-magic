@@ -54,10 +54,10 @@ class XmlTableExporterTest extends TestCase
         $this->expectExceptionMessage('Failed to add headers element to XML');
 
         $table = new Table(['Header']);
-        $exporter = new class() extends XmlTableExporter {
-            protected function addChildToElement(SimpleXMLElement $element, string $name, ?string $value = null): SimpleXMLElement|false|null
+        $exporter = new class () extends XmlTableExporter {
+            protected function addChildToElement(SimpleXMLElement $element, string $name, ?string $value = null) : SimpleXMLElement|false|null
             {
-                if ($name === 'headers') {
+                if ('headers' === $name) {
                     return false;
                 }
                 return parent::addChildToElement($element, $name, $value);
@@ -72,10 +72,10 @@ class XmlTableExporterTest extends TestCase
         $this->expectExceptionMessage('Failed to add header child element to XML');
 
         $table = new Table(['Header']);
-        $exporter = new class() extends XmlTableExporter {
-            protected function addChildToElement(SimpleXMLElement $element, string $name, ?string $value = null): SimpleXMLElement|false|null
+        $exporter = new class () extends XmlTableExporter {
+            protected function addChildToElement(SimpleXMLElement $element, string $name, ?string $value = null) : SimpleXMLElement|false|null
             {
-                if ($name === 'header') {
+                if ('header' === $name) {
                     return false;
                 }
                 return parent::addChildToElement($element, $name, $value);
@@ -90,10 +90,10 @@ class XmlTableExporterTest extends TestCase
         $this->expectExceptionMessage('Failed to add rows element to XML');
 
         $table = new Table(['Header']);
-        $exporter = new class() extends XmlTableExporter {
-            protected function addChildToElement(SimpleXMLElement $element, string $name, ?string $value = null): SimpleXMLElement|false|null
+        $exporter = new class () extends XmlTableExporter {
+            protected function addChildToElement(SimpleXMLElement $element, string $name, ?string $value = null) : SimpleXMLElement|false|null
             {
-                if ($name === 'rows') {
+                if ('rows' === $name) {
                     return false;
                 }
                 return parent::addChildToElement($element, $name, $value);
@@ -109,10 +109,10 @@ class XmlTableExporterTest extends TestCase
 
         $table = new Table(['Header']);
         $table->addRow(['Value']);
-        $exporter = new class() extends XmlTableExporter {
-            protected function addChildToElement(SimpleXMLElement $element, string $name, ?string $value = null): SimpleXMLElement|false|null
+        $exporter = new class () extends XmlTableExporter {
+            protected function addChildToElement(SimpleXMLElement $element, string $name, ?string $value = null) : SimpleXMLElement|false|null
             {
-                if ($name === 'row') {
+                if ('row' === $name) {
                     return false;
                 }
                 return parent::addChildToElement($element, $name, $value);
@@ -128,10 +128,10 @@ class XmlTableExporterTest extends TestCase
 
         $table = new Table(['Header']);
         $table->addRow(['Value']);
-        $exporter = new class() extends XmlTableExporter {
-            protected function addChildToElement(SimpleXMLElement $element, string $name, ?string $value = null): SimpleXMLElement|false|null
+        $exporter = new class () extends XmlTableExporter {
+            protected function addChildToElement(SimpleXMLElement $element, string $name, ?string $value = null) : SimpleXMLElement|false|null
             {
-                if ($name !== 'table' && $name !== 'headers' && $name !== 'header' && $name !== 'rows' && $name !== 'row') {
+                if ('table' !== $name && 'headers' !== $name && 'header' !== $name && 'rows' !== $name && 'row' !== $name) {
                     return false;
                 }
                 return parent::addChildToElement($element, $name, $value);
@@ -146,8 +146,8 @@ class XmlTableExporterTest extends TestCase
         $this->expectExceptionMessage('Failed to generate XML');
 
         $table = new Table(['Header']);
-        $exporter = new class() extends XmlTableExporter {
-            protected function convertXmlToString(SimpleXMLElement $element): string|false
+        $exporter = new class () extends XmlTableExporter {
+            protected function convertXmlToString(SimpleXMLElement $element) : string|false
             {
                 return false;
             }

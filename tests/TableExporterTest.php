@@ -2,10 +2,6 @@
 
 namespace Tests;
 
-use ChernegaSergiy\TableMagic\Exporters\CsvTableExporter;
-use ChernegaSergiy\TableMagic\Exporters\HtmlTableExporter;
-use ChernegaSergiy\TableMagic\Exporters\JsonTableExporter;
-use ChernegaSergiy\TableMagic\Exporters\XmlTableExporter;
 use ChernegaSergiy\TableMagic\Table;
 use ChernegaSergiy\TableMagic\TableExporter;
 use Exception;

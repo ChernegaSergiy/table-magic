@@ -53,7 +53,7 @@ class CsvTableExporterTest extends TestCase
         $this->expectExceptionMessage('Failed to open temporary stream');
 
         $table = new Table(['Header']);
-        $exporter = new class() extends CsvTableExporter {
+        $exporter = new class () extends CsvTableExporter {
             protected function openTemporaryStream()
             {
                 return false;

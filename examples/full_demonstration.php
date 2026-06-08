@@ -158,4 +158,3 @@ $ugly_chaos_style = new TableStyle(
 TableStyleRegistry::register('ugly-chaos', $ugly_chaos_style);
 $table->setStyle('ugly-chaos');
 echo $table;
-

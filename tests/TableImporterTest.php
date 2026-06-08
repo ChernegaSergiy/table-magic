@@ -2,9 +2,6 @@
 
 namespace Tests;
 
-use ChernegaSergiy\TableMagic\Importers\CsvTableImporter;
-use ChernegaSergiy\TableMagic\Importers\JsonTableImporter;
-use ChernegaSergiy\TableMagic\Importers\XmlTableImporter;
 use ChernegaSergiy\TableMagic\Table;
 use ChernegaSergiy\TableMagic\TableImporter;
 use Exception;

@@ -47,7 +47,7 @@ class JsonTableExporterTest extends TestCase
         $this->assertEquals($expectedJson, $exporter->export($table));
     }
 
-    public function testExportToJsonWithInvalidUtf8Data(): void
+    public function testExportToJsonWithInvalidUtf8Data() : void
     {
         $this->expectException(Exception::class);
         $this->expectExceptionMessage('Failed to encode data to JSON');
