@@ -368,18 +368,18 @@ class Table
      * Updates a specific row in the table.
      *
      * @param  int                       $index  The index of the row to update.
-     * @param  array<int|string, string> $newRow The new data for the row.
+     * @param  array<int|string, string> $new_row The new data for the row.
      * @throws Exception                 If the row index is invalid.
      */
-    public function updateRow(int $index, array $newRow) : void
+    public function updateRow(int $index, array $new_row) : void
     {
         if (! isset($this->rows[$index])) {
             throw new Exception("Row index $index is invalid.");
         }
         $header_count = count($this->headers);
-        $newRow = array_pad(array_slice($newRow, 0, $header_count), $header_count, '');
-        $this->rows[$index] = array_values($newRow);
-        $this->updateColWidths(array_values($newRow));
+        $new_row = array_pad(array_slice($new_row, 0, $header_count), $header_count, '');
+        $this->rows[$index] = array_values($new_row);
+        $this->updateColWidths(array_values($new_row));
     }
 
     /**
