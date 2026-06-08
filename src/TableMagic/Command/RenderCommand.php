@@ -25,7 +25,7 @@ class RenderCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output) : int
     {
-        $file = $input->getArgument('file');
+        $file = (string) $input->getArgument('file');
 
         if (! file_exists($file) || ! is_readable($file)) {
             $output->writeln("<error>File not found or not readable: {$file}</error>");
@@ -42,14 +42,18 @@ class RenderCommand extends Command
         }
 
         $data = file_get_contents($file);
+        if (false === $data) {
+            $output->writeln("<error>Failed to read file: {$file}</error>");
+            return Command::FAILURE;
+        }
 
         try {
             $importer = new TableImporter();
-            $table = $importer->import($data, strtolower($format));
+            $table = $importer->import($data, strtolower((string) $format));
 
             $style = $input->getOption('style');
             if ($style) {
-                $table->setStyle($style);
+                $table->setStyle((string) $style);
             }
 
             // Render the table and output it to the console
