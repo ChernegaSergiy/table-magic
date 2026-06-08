@@ -33,11 +33,11 @@ class TableStyle
     /**
      * TableStyle constructor.
      *
-     * @param string $vertical
-     * @param array<int, string> $top
+     * @param string                                            $vertical
+     * @param array<int, string>                                $top
      * @param array{0: string, 1: string, 2: string, 3: string} $header
-     * @param array<int, string> $row
-     * @param array<int, string> $bottom
+     * @param array<int, string>                                $row
+     * @param array<int, string>                                $bottom
      */
     public function __construct(
         string $vertical,
@@ -70,102 +70,102 @@ class TableStyle
         $this->bottom_right = $bottom[3] ?? '';
     }
 
-    public function getVertical(): string
+    public function getVertical() : string
     {
         return $this->vertical;
     }
 
-    public function getTopLeft(): string
+    public function getTopLeft() : string
     {
         return $this->top_left;
     }
 
-    public function getTopHorizontal(): string
+    public function getTopHorizontal() : string
     {
         return $this->top_horizontal;
     }
 
-    public function getTopIntersection(): string
+    public function getTopIntersection() : string
     {
         return $this->top_intersection;
     }
 
-    public function getTopRight(): string
+    public function getTopRight() : string
     {
         return $this->top_right;
     }
 
-    public function getHeaderLeft(): string
+    public function getHeaderLeft() : string
     {
         return $this->header_left;
     }
 
-    public function getHeaderHorizontal(): string
+    public function getHeaderHorizontal() : string
     {
         return $this->header_horizontal;
     }
 
-    public function getHeaderIntersection(): string
+    public function getHeaderIntersection() : string
     {
         return $this->header_intersection;
     }
 
-    public function getHeaderRight(): string
+    public function getHeaderRight() : string
     {
         return $this->header_right;
     }
 
-    public function getRowLeft(): string
+    public function getRowLeft() : string
     {
         return $this->row_left;
     }
 
-    public function getRowHorizontal(): string
+    public function getRowHorizontal() : string
     {
         return $this->row_horizontal;
     }
 
-    public function getRowIntersection(): string
+    public function getRowIntersection() : string
     {
         return $this->row_intersection;
     }
 
-    public function getRowRight(): string
+    public function getRowRight() : string
     {
         return $this->row_right;
     }
 
-    public function getBottomLeft(): string
+    public function getBottomLeft() : string
     {
         return $this->bottom_left;
     }
 
-    public function getBottomHorizontal(): string
+    public function getBottomHorizontal() : string
     {
         return $this->bottom_horizontal;
     }
 
-    public function getBottomIntersection(): string
+    public function getBottomIntersection() : string
     {
         return $this->bottom_intersection;
     }
 
-    public function getBottomRight(): string
+    public function getBottomRight() : string
     {
         return $this->bottom_right;
     }
 
-    public function hasTopBorder(): bool
+    public function hasTopBorder() : bool
     {
         return $this->has_top_border;
     }
 
-    public function hasRowSeparator(): bool
+    public function hasRowSeparator() : bool
     {
         return $this->has_row_separator;
     }
 
-    public function hasBottomBorder(): bool
+    public function hasBottomBorder() : bool
     {
         return $this->has_bottom_border;
     }

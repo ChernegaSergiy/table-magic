@@ -13,10 +13,9 @@ class TableImporter
     /**
      * Imports data into a new table from the specified format.
      *
-     * @param  string  $data  The data to import.
-     * @param  string  $format  The format of the data ('csv', 'json', 'xml').
-     * @return Table The newly created table with imported data.
-     *
+     * @param  string    $data   The data to import.
+     * @param  string    $format The format of the data ('csv', 'json', 'xml').
+     * @return Table     The newly created table with imported data.
      * @throws Exception If the format is unsupported.
      */
     public function import(string $data, string $format) : Table

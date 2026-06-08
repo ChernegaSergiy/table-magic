@@ -10,7 +10,7 @@ class MarkdownTableExporter implements TableExporterInterface
     /**
      * Exports a Table object to a Markdown string representation.
      *
-     * @param  Table  $table  The Table object to export.
+     * @param  Table  $table The Table object to export.
      * @return string The Markdown string representation of the table.
      */
     public function export(Table $table) : string

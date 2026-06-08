@@ -12,9 +12,8 @@ class XmlTableExporter implements TableExporterInterface
     /**
      * Exports a Table object to an XML string representation.
      *
-     * @param  Table  $table  The Table object to export.
-     * @return string The XML string representation of the table.
-     *
+     * @param  Table     $table The Table object to export.
+     * @return string    The XML string representation of the table.
      * @throws Exception If an error occurs during XML conversion.
      */
     public function export(Table $table) : string

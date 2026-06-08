@@ -10,8 +10,8 @@ class MarkdownTableImporter implements TableImporterInterface
     /**
      * Imports data from a Markdown table string into a Table object.
      *
-     * @param  string  $data  The Markdown table string to import.
-     * @return Table The imported Table object.
+     * @param  string $data The Markdown table string to import.
+     * @return Table  The imported Table object.
      */
     public function import(string $data) : Table
     {
@@ -24,7 +24,7 @@ class MarkdownTableImporter implements TableImporterInterface
         // Extract alignments from separator line
         $separatorLine = array_shift($lines);
         $alignments = [];
-        if ($separatorLine !== null) {
+        if (null !== $separatorLine) {
             $alignments = $this->parseAlignment($separatorLine, $headers);
         }
 
@@ -41,7 +41,7 @@ class MarkdownTableImporter implements TableImporterInterface
     }
 
     /**
-     * @param  string  $line
+     * @param  string             $line
      * @return array<int, string>
      */
     private function parseRow(string $line) : array
@@ -51,8 +51,8 @@ class MarkdownTableImporter implements TableImporterInterface
     }
 
     /**
-     * @param  string  $line
-     * @param  array<int, string>  $headers
+     * @param  string                $line
+     * @param  array<int, string>    $headers
      * @return array<string, string>
      */
     private function parseAlignment(string $line, array $headers) : array
@@ -63,14 +63,16 @@ class MarkdownTableImporter implements TableImporterInterface
         foreach ($columns as $index => $column) {
             $column = trim($column);
             $header = $headers[$index] ?? null;
-            if ($header === null) continue;
+            if (null === $header) {
+                continue;
+            }
 
             $firstChar = $column[0];
             $lastChar = $column[strlen($column) - 1];
 
-            if ($firstChar === ':' && $lastChar === ':') {
+            if (':' === $firstChar && ':' === $lastChar) {
                 $alignments[$header] = 'c';
-            } elseif ($lastChar === ':') {
+            } elseif (':' === $lastChar) {
                 $alignments[$header] = 'r';
             } else {
                 $alignments[$header] = 'l';

@@ -2,8 +2,6 @@
 
 namespace ChernegaSergiy\TableMagic;
 
-use ChernegaSergiy\TableMagic\TableExporter;
-
 class TerminalInteraction
 {
     private Table $table;
@@ -23,11 +21,11 @@ class TerminalInteraction
     /**
      * TerminalInteraction constructor.
      *
-     * @param  Table  $table  The table to be displayed and interacted with.
-     * @param  int  $rows_per_page  The number of rows to display per page (default is 5).
-     * @param  resource  $input_stream  The input stream to read from (default is STDIN).
-     * @param  resource  $output_stream  The output stream to write to (default is STDOUT).
-     * @param  TableExporter|null  $tableExporter  Optional TableExporter instance for dependency injection.
+     * @param Table              $table         The table to be displayed and interacted with.
+     * @param int                $rows_per_page The number of rows to display per page (default is 5).
+     * @param resource           $input_stream  The input stream to read from (default is STDIN).
+     * @param resource           $output_stream The output stream to write to (default is STDOUT).
+     * @param TableExporter|null $tableExporter Optional TableExporter instance for dependency injection.
      */
     public function __construct(Table $table, int $rows_per_page = 5, $input_stream = STDIN, $output_stream = STDOUT, ?TableExporter $tableExporter = null)
     {
@@ -114,7 +112,7 @@ class TerminalInteraction
         if (file_exists($filename)) {
             fwrite($this->output_stream, "File '{$filename}' already exists. Overwrite? (y/n): ");
             $overwrite_input = fgets($this->input_stream);
-            if (false === $overwrite_input || strtolower(trim($overwrite_input)) !== 'y') {
+            if (false === $overwrite_input || 'y' !== strtolower(trim($overwrite_input))) {
                 fwrite($this->output_stream, "Export cancelled.\n");
                 return;
             }

@@ -11,9 +11,8 @@ class JsonTableExporter implements TableExporterInterface
     /**
      * Exports a Table object to a JSON string representation.
      *
-     * @param  Table  $table  The Table object to export.
-     * @return string The JSON string representation of the table.
-     *
+     * @param  Table     $table The Table object to export.
+     * @return string    The JSON string representation of the table.
      * @throws Exception If an error occurs during JSON conversion.
      */
     public function export(Table $table) : string

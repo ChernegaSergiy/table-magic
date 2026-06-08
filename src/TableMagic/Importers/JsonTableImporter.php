@@ -11,9 +11,8 @@ class JsonTableImporter implements TableImporterInterface
     /**
      * Imports data from JSON format into a new table.
      *
-     * @param  string  $data  The JSON data to import.
-     * @return Table The newly created table with imported data.
-     *
+     * @param  string    $data The JSON data to import.
+     * @return Table     The newly created table with imported data.
      * @throws Exception If an error occurs during JSON import.
      */
     public function import(string $data) : Table

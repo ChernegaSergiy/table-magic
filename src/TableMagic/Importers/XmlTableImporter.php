@@ -12,9 +12,8 @@ class XmlTableImporter implements TableImporterInterface
     /**
      * Imports data from XML format into a new table.
      *
-     * @param  string  $data  The XML data to import.
-     * @return Table The newly created table with imported data.
-     *
+     * @param  string    $data The XML data to import.
+     * @return Table     The newly created table with imported data.
      * @throws Exception If an error occurs during XML import.
      */
     public function import(string $data) : Table

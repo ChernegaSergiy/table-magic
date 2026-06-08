@@ -3,8 +3,6 @@
 namespace ChernegaSergiy\TableMagic;
 
 use Exception;
-use ChernegaSergiy\TableMagic\TableStyle;
-use ChernegaSergiy\TableMagic\TableStyleRegistry;
 
 class Table
 {
@@ -48,8 +46,8 @@ class Table
     /**
      * Table constructor.
      *
-     * @param  array<int, string>  $headers  Initial headers for the table.
-     * @param  array<string, string>  $alignments  Initial alignments for the columns.
+     * @param array<int, string>    $headers    Initial headers for the table.
+     * @param array<string, string> $alignments Initial alignments for the columns.
      */
     public function __construct(array $headers = [], array $alignments = [])
     {
@@ -64,7 +62,7 @@ class Table
      *
      * @param string|TableStyle $style The style name or a TableStyle instance.
      */
-    public function setStyle($style): void
+    public function setStyle($style) : void
     {
         if (is_string($style)) {
             $style = TableStyleRegistry::get($style);
@@ -76,8 +74,8 @@ class Table
     /**
      * Adds a new row to the table.
      *
-     * @param  array<int|string, string>  $row  An array representing the row to be added.
-     * @param  bool  $divider  Whether to add a divider after this row.
+     * @param array<int|string, string> $row     An array representing the row to be added.
+     * @param bool                      $divider Whether to add a divider after this row.
      */
     public function addRow(array $row, bool $divider = false) : void
     {
@@ -91,8 +89,8 @@ class Table
     /**
      * Adds multiple rows to the table.
      *
-     * @param  array<int, array<int|string, string>>  $rows  An array of arrays representing the rows to be added.
-     * @param  array<int, bool>|null  $dividers  An optional array of booleans indicating where dividers should be added.
+     * @param array<int, array<int|string, string>> $rows     An array of arrays representing the rows to be added.
+     * @param array<int, bool>|null                 $dividers An optional array of booleans indicating where dividers should be added.
      */
     public function addRows(array $rows, ?array $dividers = null) : void
     {
@@ -105,9 +103,9 @@ class Table
     /**
      * Adds a new column to the table.
      *
-     * @param  string  $header  The header for the new column.
-     * @param  array<int, string>  $values  The values for the new column.
-     * @param  string  $alignment  The alignment for the new column ('l', 'r', or 'c').
+     * @param string             $header    The header for the new column.
+     * @param array<int, string> $values    The values for the new column.
+     * @param string             $alignment The alignment for the new column ('l', 'r', or 'c').
      */
     public function addColumn(string $header, array $values, string $alignment = 'l') : void
     {
@@ -120,8 +118,7 @@ class Table
     /**
      * Removes the divider after the specified row index.
      *
-     * @param  int  $row_index  The index of the row after which the divider should be removed.
-     *
+     * @param  int       $row_index The index of the row after which the divider should be removed.
      * @throws Exception If the row index is invalid.
      */
     public function removeDivider(int $row_index) : void
@@ -136,7 +133,7 @@ class Table
     /**
      * Checks if a divider exists for the specified row.
      *
-     * @param  int  $row_index  The index of the row to check for a divider.
+     * @param  int  $row_index The index of the row to check for a divider.
      * @return bool Returns `true` if a divider exists for the given row, or `false` if it does not exist or the index is not found.
      */
     public function hasDivider(int $row_index) : bool
@@ -202,7 +199,7 @@ class Table
     /**
      * Sets the alignment for each column header.
      *
-     * @param  array<string, string>  $alignments  An associative array of column headers to their alignment ('l' for left, 'r' for right, 'c' for center).
+     * @param array<string, string> $alignments An associative array of column headers to their alignment ('l' for left, 'r' for right, 'c' for center).
      */
     public function setAlignments(array $alignments) : void
     {
@@ -214,9 +211,8 @@ class Table
     /**
      * Sets the alignment for a specific column.
      *
-     * @param  string  $column  The name of the column to set the alignment for.
-     * @param  string  $alignment  The alignment to set ('l' for left, 'r' for right, 'c' for center).
-     *
+     * @param  string    $column    The name of the column to set the alignment for.
+     * @param  string    $alignment The alignment to set ('l' for left, 'r' for right, 'c' for center).
      * @throws Exception If the column is not found.
      */
     public function setAlignment(string $column, string $alignment) : void
@@ -234,9 +230,8 @@ class Table
     /**
      * Sorts the table by a specific column.
      *
-     * @param  string  $column  The name of the column to sort by.
-     * @param  string  $order  The order to sort ('asc' for ascending, 'desc' for descending).
-     *
+     * @param  string    $column The name of the column to sort by.
+     * @param  string    $order  The order to sort ('asc' for ascending, 'desc' for descending).
      * @throws Exception If the column is not found.
      */
     public function sortTable(string $column, string $order = 'asc') : void
@@ -263,9 +258,9 @@ class Table
     /**
      * Formats a single row with proper padding and alignment.
      *
-     * @param  array<int, string>  $row  The row to format.
-     * @param  int  $pad_type  The type of padding to use (default is STR_PAD_RIGHT).
-     * @return string The formatted row as a string.
+     * @param  array<int, string> $row      The row to format.
+     * @param  int                $pad_type The type of padding to use (default is STR_PAD_RIGHT).
+     * @return string             The formatted row as a string.
      */
     protected function formatRow(array $row, int $pad_type = STR_PAD_RIGHT) : string
     {
@@ -281,7 +276,7 @@ class Table
     /**
      * Updates the width of each column based on the provided data.
      *
-     * @param  array<int, string>  $data  The data to evaluate for column widths.
+     * @param array<int, string> $data The data to evaluate for column widths.
      */
     public function updateColWidths(array $data) : void
     {
@@ -296,18 +291,18 @@ class Table
      *
      * @return string The drawn line as a string.
      */
-    protected function drawLine(string $left, string $horizontal, string $intersection, string $right): string
+    protected function drawLine(string $left, string $horizontal, string $intersection, string $right) : string
     {
-        return $left . implode($intersection, array_map(fn($width) => str_repeat($horizontal, $width + 2), $this->col_widths)) . $right . PHP_EOL;
+        return $left . implode($intersection, array_map(fn ($width) => str_repeat($horizontal, $width + 2), $this->col_widths)) . $right . PHP_EOL;
     }
 
     /**
      * Pads a string to a specified length, accounting for multibyte characters.
      *
-     * @param  string  $input  The input string to pad.
-     * @param  int  $pad_length  The length to pad to.
-     * @param  string  $pad_string  The string to pad with (default is a space).
-     * @param  int  $pad_type  The type of padding to use (default is STR_PAD_RIGHT).
+     * @param  string $input      The input string to pad.
+     * @param  int    $pad_length The length to pad to.
+     * @param  string $pad_string The string to pad with (default is a space).
+     * @param  int    $pad_type   The type of padding to use (default is STR_PAD_RIGHT).
      * @return string The padded string.
      */
     protected function mbStrPad(string $input, int $pad_length, string $pad_string = ' ', int $pad_type = STR_PAD_RIGHT) : string
@@ -320,8 +315,8 @@ class Table
     /**
      * Updates the width of a specific column based on its header and values.
      *
-     * @param  string  $header  The header of the column.
-     * @param  array<int, string>  $values  The values of the column.
+     * @param string             $header The header of the column.
+     * @param array<int, string> $values The values of the column.
      */
     protected function updateColumnWidth(string $header, array $values) : void
     {
@@ -335,7 +330,7 @@ class Table
     /**
      * Appends values to the end of each row for a new column.
      *
-     * @param  array<int, string>  $values  The values to append.
+     * @param array<int, string> $values The values to append.
      */
     protected function appendColumnValues(array $values) : void
     {
@@ -357,9 +352,9 @@ class Table
     /**
      * Returns a specific row from the table.
      *
-     * @param int $index The index of the row to retrieve.
+     * @param  int                $index The index of the row to retrieve.
      * @return array<int, string> The row at the specified index.
-     * @throws Exception If the row index is invalid.
+     * @throws Exception          If the row index is invalid.
      */
     public function getRow(int $index) : array
     {
@@ -372,9 +367,9 @@ class Table
     /**
      * Updates a specific row in the table.
      *
-     * @param int $index The index of the row to update.
-     * @param array<int|string, string> $newRow The new data for the row.
-     * @throws Exception If the row index is invalid.
+     * @param  int                       $index  The index of the row to update.
+     * @param  array<int|string, string> $newRow The new data for the row.
+     * @throws Exception                 If the row index is invalid.
      */
     public function updateRow(int $index, array $newRow) : void
     {
@@ -400,7 +395,7 @@ class Table
     /**
      * Deletes a specific row from the table.
      *
-     * @param int $index The index of the row to delete.
+     * @param  int       $index The index of the row to delete.
      * @throws Exception If the row index is invalid.
      */
     public function deleteRow(int $index) : void

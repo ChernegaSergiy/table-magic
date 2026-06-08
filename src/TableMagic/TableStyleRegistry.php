@@ -10,7 +10,7 @@ class TableStyleRegistry
     private static array $styles = [];
     private static bool $is_initialized = false;
 
-    private static function init(): void
+    private static function init() : void
     {
         if (self::$is_initialized) {
             return;
@@ -96,12 +96,12 @@ class TableStyleRegistry
         self::$is_initialized = true;
     }
 
-    public static function register(string $name, TableStyle $style): void
+    public static function register(string $name, TableStyle $style) : void
     {
         self::$styles[$name] = $style;
     }
 
-    public static function get(string $name): TableStyle
+    public static function get(string $name) : TableStyle
     {
         self::init();
 

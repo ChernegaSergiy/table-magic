@@ -16,7 +16,7 @@ class TableExporter
     /**
      * TableExporter constructor.
      *
-     * @param  Table  $table  The table to be exported.
+     * @param Table $table The table to be exported.
      */
     public function __construct(Table $table)
     {
@@ -26,9 +26,8 @@ class TableExporter
     /**
      * Exports the table in the specified format.
      *
-     * @param  string  $format  The format to export the table ('html', 'csv', 'json', 'xml').
-     * @return string The exported table data as a string.
-     *
+     * @param  string    $format The format to export the table ('html', 'csv', 'json', 'xml').
+     * @return string    The exported table data as a string.
      * @throws Exception If the format is unsupported.
      */
     public function export(string $format) : string
