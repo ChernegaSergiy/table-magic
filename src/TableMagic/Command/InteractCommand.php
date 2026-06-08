@@ -17,7 +17,7 @@ class InteractCommand extends Command
     {
         $this
             ->setName('interact')
-            ->setDescription('Opens a table in interactive mode (pagination, editing, sorting).')
+            ->setDescription('Opens a table in interactive mode (pagination, editing, sorting)')
             ->addArgument('file', InputArgument::REQUIRED, 'The input file containing the data')
             ->addOption('format', 'f', InputOption::VALUE_OPTIONAL, 'The format of the input data (csv, json, xml, markdown). Guessed from extension if not provided.')
             ->addOption('style', 's', InputOption::VALUE_OPTIONAL, 'The style to apply to the table', 'default')
