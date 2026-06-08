@@ -297,4 +297,3 @@ This project is licensed under the CSSM Unlimited License v2.0 (CSSM-ULv2). See 
 ## Acknowledgments
 
 - Inspired by the Python [PrettyTable](https://github.com/jazzband/prettytable) library
-- Thanks to all contributors who have helped shape TableMagic
