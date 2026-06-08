@@ -4,31 +4,31 @@ namespace ChernegaSergiy\TableMagic;
 
 class TableStyle
 {
-    private string $topLeft;
-    private string $topHorizontal;
-    private string $topIntersection;
-    private string $topRight;
+    private string $top_left;
+    private string $top_horizontal;
+    private string $top_intersection;
+    private string $top_right;
 
-    private string $headerLeft;
-    private string $headerHorizontal;
-    private string $headerIntersection;
-    private string $headerRight;
+    private string $header_left;
+    private string $header_horizontal;
+    private string $header_intersection;
+    private string $header_right;
 
-    private string $rowLeft;
-    private string $rowHorizontal;
-    private string $rowIntersection;
-    private string $rowRight;
+    private string $row_left;
+    private string $row_horizontal;
+    private string $row_intersection;
+    private string $row_right;
 
-    private string $bottomLeft;
-    private string $bottomHorizontal;
-    private string $bottomIntersection;
-    private string $bottomRight;
+    private string $bottom_left;
+    private string $bottom_horizontal;
+    private string $bottom_intersection;
+    private string $bottom_right;
 
     private string $vertical;
 
-    private bool $hasTopBorder;
-    private bool $hasRowSeparator;
-    private bool $hasBottomBorder;
+    private bool $has_top_border;
+    private bool $has_row_separator;
+    private bool $has_bottom_border;
 
     /**
      * TableStyle constructor.
@@ -48,26 +48,26 @@ class TableStyle
     ) {
         $this->vertical = $vertical;
 
-        $this->hasTopBorder = !empty($top);
-        $this->topLeft = $top[0] ?? '';
-        $this->topHorizontal = $top[1] ?? '';
-        $this->topIntersection = $top[2] ?? '';
-        $this->topRight = $top[3] ?? '';
+        $this->has_top_border = !empty($top);
+        $this->top_left = $top[0] ?? '';
+        $this->top_horizontal = $top[1] ?? '';
+        $this->top_intersection = $top[2] ?? '';
+        $this->top_right = $top[3] ?? '';
 
         // Header separator is mandatory
-        [$this->headerLeft, $this->headerHorizontal, $this->headerIntersection, $this->headerRight] = $header;
+        [$this->header_left, $this->header_horizontal, $this->header_intersection, $this->header_right] = $header;
 
-        $this->hasRowSeparator = !empty($row);
-        $this->rowLeft = $row[0] ?? '';
-        $this->rowHorizontal = $row[1] ?? '';
-        $this->rowIntersection = $row[2] ?? '';
-        $this->rowRight = $row[3] ?? '';
+        $this->has_row_separator = !empty($row);
+        $this->row_left = $row[0] ?? '';
+        $this->row_horizontal = $row[1] ?? '';
+        $this->row_intersection = $row[2] ?? '';
+        $this->row_right = $row[3] ?? '';
 
-        $this->hasBottomBorder = !empty($bottom);
-        $this->bottomLeft = $bottom[0] ?? '';
-        $this->bottomHorizontal = $bottom[1] ?? '';
-        $this->bottomIntersection = $bottom[2] ?? '';
-        $this->bottomRight = $bottom[3] ?? '';
+        $this->has_bottom_border = !empty($bottom);
+        $this->bottom_left = $bottom[0] ?? '';
+        $this->bottom_horizontal = $bottom[1] ?? '';
+        $this->bottom_intersection = $bottom[2] ?? '';
+        $this->bottom_right = $bottom[3] ?? '';
     }
 
     public function getVertical(): string
@@ -77,98 +77,96 @@ class TableStyle
 
     public function getTopLeft(): string
     {
-        return $this->topLeft;
+        return $this->top_left;
     }
 
     public function getTopHorizontal(): string
     {
-        return $this->topHorizontal;
+        return $this->top_horizontal;
     }
 
     public function getTopIntersection(): string
     {
-        return $this->topIntersection;
+        return $this->top_intersection;
     }
 
     public function getTopRight(): string
     {
-        return $this->topRight;
+        return $this->top_right;
     }
 
     public function getHeaderLeft(): string
     {
-        return $this->headerLeft;
+        return $this->header_left;
     }
 
     public function getHeaderHorizontal(): string
     {
-        return $this->headerHorizontal;
+        return $this->header_horizontal;
     }
 
     public function getHeaderIntersection(): string
     {
-        return $this->headerIntersection;
+        return $this->header_intersection;
     }
 
     public function getHeaderRight(): string
     {
-        return $this->headerRight;
+        return $this->header_right;
     }
 
     public function getRowLeft(): string
     {
-        return $this->rowLeft;
+        return $this->row_left;
     }
 
     public function getRowHorizontal(): string
     {
-        return $this->rowHorizontal;
+        return $this->row_horizontal;
     }
 
     public function getRowIntersection(): string
     {
-        return $this->rowIntersection;
+        return $this->row_intersection;
     }
 
     public function getRowRight(): string
     {
-        return $this->rowRight;
+        return $this->row_right;
     }
 
     public function getBottomLeft(): string
     {
-        return $this->bottomLeft;
+        return $this->bottom_left;
     }
 
     public function getBottomHorizontal(): string
     {
-        return $this->bottomHorizontal;
+        return $this->bottom_horizontal;
     }
 
     public function getBottomIntersection(): string
     {
-        return $this->bottomIntersection;
+        return $this->bottom_intersection;
     }
 
     public function getBottomRight(): string
     {
-        return $this->bottomRight;
+        return $this->bottom_right;
     }
 
     public function hasTopBorder(): bool
     {
-        return $this->hasTopBorder;
+        return $this->has_top_border;
     }
 
     public function hasRowSeparator(): bool
     {
-        return $this->hasRowSeparator;
+        return $this->has_row_separator;
     }
 
     public function hasBottomBorder(): bool
     {
-        return $this->hasBottomBorder;
+        return $this->has_bottom_border;
     }
-
-
 }
