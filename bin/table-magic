@@ -1,0 +1,28 @@
+#!/usr/bin/env php
+<?php
+
+if (file_exists(__DIR__ . '/../vendor/autoload.php')) {
+    require __DIR__ . '/../vendor/autoload.php';
+} elseif (file_exists(__DIR__ . '/../../../autoload.php')) {
+    // When the library is installed as a dependency in another project
+    require __DIR__ . '/../../../autoload.php';
+} else {
+    echo "Please run 'composer install' first.\n";
+    exit(1);
+}
+
+use ChernegaSergiy\TableMagic\Command\InteractCommand;
+use ChernegaSergiy\TableMagic\Command\RenderCommand;
+use Symfony\Component\Console\Application;
+
+$application = new Application('TableMagic CLI', '1.0.0');
+
+// Add our commands
+$renderCommand = new RenderCommand();
+$application->addCommand($renderCommand);
+$application->addCommand(new InteractCommand());
+
+// Set render as the default command
+$application->setDefaultCommand($renderCommand->getName(), true);
+
+$application->run();
