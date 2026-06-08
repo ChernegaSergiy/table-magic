@@ -8,11 +8,11 @@ class TableStyleRegistry
 {
     /** @var array<string, TableStyle> */
     private static array $styles = [];
-    private static bool $isInitialized = false;
+    private static bool $is_initialized = false;
 
-    private static function init() : void
+    private static function init(): void
     {
-        if (self::$isInitialized) {
+        if (self::$is_initialized) {
             return;
         }
 
@@ -23,7 +23,6 @@ class TableStyleRegistry
             ['+', '-', '+', '+'],
             ['+', '-', '+', '+']
         ));
-
         self::register('compact', new TableStyle(
             ' ',
             [],
@@ -31,7 +30,6 @@ class TableStyleRegistry
             [],
             []
         ));
-
         self::register('dots', new TableStyle(
             ':',
             ['.', '.', '.', '.'],
@@ -39,7 +37,6 @@ class TableStyleRegistry
             [':', '.', ':', ':'],
             ['.', '.', '.', '.']
         ));
-
         self::register('rounded', new TableStyle(
             '|',
             ['.', '-', '.', '.'],
@@ -56,7 +53,6 @@ class TableStyleRegistry
             ['├', '─', '┼', '┤'],
             ['└', '─', '┴', '┘']
         ));
-
         self::register('unicode-double-line', new TableStyle(
             '║',
             ['╔', '═', '╦', '╗'],
@@ -73,7 +69,6 @@ class TableStyleRegistry
             [],
             []
         ));
-
         self::register('reddit-markdown', new TableStyle(
             '|',
             [],
@@ -90,7 +85,6 @@ class TableStyleRegistry
             ['+', '-', '+', '+'],
             ['+', '-', '+', '+']
         ));
-
         self::register('restructured-text-simple', new TableStyle(
             ' ',
             [' ', '=', ' ', ' '],
@@ -99,15 +93,15 @@ class TableStyleRegistry
             [' ', '=', ' ', ' ']
         ));
 
-        self::$isInitialized = true;
+        self::$is_initialized = true;
     }
 
-    public static function register(string $name, TableStyle $style) : void
+    public static function register(string $name, TableStyle $style): void
     {
         self::$styles[$name] = $style;
     }
 
-    public static function get(string $name) : TableStyle
+    public static function get(string $name): TableStyle
     {
         self::init();
 
@@ -118,4 +112,3 @@ class TableStyleRegistry
         return self::$styles[$name];
     }
 }
-
