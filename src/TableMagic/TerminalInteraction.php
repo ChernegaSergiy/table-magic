@@ -16,25 +16,25 @@ class TerminalInteraction
     /** @var resource */
     private $output_stream;
 
-    private ?TableExporter $tableExporter;
+    private ?TableExporter $table_exporter;
 
     /**
      * TerminalInteraction constructor.
      *
-     * @param Table              $table         The table to be displayed and interacted with.
-     * @param int                $rows_per_page The number of rows to display per page (default is 5).
-     * @param resource           $input_stream  The input stream to read from (default is STDIN).
-     * @param resource           $output_stream The output stream to write to (default is STDOUT).
-     * @param TableExporter|null $tableExporter Optional TableExporter instance for dependency injection.
+     * @param Table              $table          The table to be displayed and interacted with.
+     * @param int                $rows_per_page  The number of rows to display per page (default is 5).
+     * @param resource           $input_stream   The input stream to read from (default is STDIN).
+     * @param resource           $output_stream  The output stream to write to (default is STDOUT).
+     * @param TableExporter|null $table_exporter Optional TableExporter instance for dependency injection.
      */
-    public function __construct(Table $table, int $rows_per_page = 5, $input_stream = STDIN, $output_stream = STDOUT, ?TableExporter $tableExporter = null)
+    public function __construct(Table $table, int $rows_per_page = 5, $input_stream = STDIN, $output_stream = STDOUT, ?TableExporter $table_exporter = null)
     {
         $this->table = $table;
         $this->rows_per_page = $rows_per_page;
 
         $this->input_stream = $input_stream;
         $this->output_stream = $output_stream;
-        $this->tableExporter = $tableExporter;
+        $this->table_exporter = $table_exporter;
     }
 
     /**
@@ -119,7 +119,7 @@ class TerminalInteraction
         }
 
         try {
-            $exporter = $this->tableExporter ?? new TableExporter($this->table);
+            $exporter = $this->table_exporter ?? new TableExporter($this->table);
             $exported_data = $exporter->export($format);
             file_put_contents($filename, $exported_data);
             fwrite($this->output_stream, "Table exported successfully to '{$filename}'.\n");
