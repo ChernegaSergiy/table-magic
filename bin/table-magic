@@ -18,11 +18,7 @@ use Symfony\Component\Console\Application;
 $application = new Application('TableMagic CLI', '1.0.0');
 
 // Add our commands
-$renderCommand = new RenderCommand();
-$application->addCommand($renderCommand);
+$application->addCommand(new RenderCommand());
 $application->addCommand(new InteractCommand());
-
-// Set render as the default command
-$application->setDefaultCommand($renderCommand->getName(), true);
 
 $application->run();
