@@ -18,14 +18,14 @@ class MarkdownTableImporter implements TableImporterInterface
         $lines = array_map('trim', explode("\n", trim($data)));
 
         // Extract headers
-        $headerLine = array_shift($lines);
-        $headers = $this->parseRow($headerLine);
+        $header_line = array_shift($lines);
+        $headers = $this->parseRow($header_line);
 
         // Extract alignments from separator line
-        $separatorLine = array_shift($lines);
+        $separator_line = array_shift($lines);
         $alignments = [];
-        if (null !== $separatorLine) {
-            $alignments = $this->parseAlignment($separatorLine, $headers);
+        if (null !== $separator_line) {
+            $alignments = $this->parseAlignment($separator_line, $headers);
         }
 
         $table = new Table($headers, $alignments);
@@ -67,12 +67,12 @@ class MarkdownTableImporter implements TableImporterInterface
                 continue;
             }
 
-            $firstChar = $column[0];
-            $lastChar = $column[strlen($column) - 1];
+            $first_char = $column[0];
+            $last_char = $column[strlen($column) - 1];
 
-            if (':' === $firstChar && ':' === $lastChar) {
+            if (':' === $first_char && ':' === $last_char) {
                 $alignments[$header] = 'c';
-            } elseif (':' === $lastChar) {
+            } elseif (':' === $last_char) {
                 $alignments[$header] = 'r';
             } else {
                 $alignments[$header] = 'l';
