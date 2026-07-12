@@ -63,6 +63,35 @@ class InteractCommandTest extends TestCase
         $this->assertStringContainsString('Error: ', $commandTester->getDisplay());
     }
 
+    public function testExecuteFailsIfFileArgumentIsNotString(): void
+    {
+        $command = new InteractCommand();
+        $commandTester = new CommandTester($command);
+        $commandTester->execute([
+            'file' => ['array_value']
+        ]);
+
+        $this->assertNotSame(0, $commandTester->getStatusCode());
+        $this->assertStringContainsString('Invalid file argument', $commandTester->getDisplay());
+    }
+
+    public function testExecuteFailsIfFileCannotBeRead(): void
+    {
+        stream_wrapper_register('fail', FailStreamWrapper::class);
+
+        $command = new InteractCommand();
+        $commandTester = new CommandTester($command);
+        $commandTester->execute([
+            'file' => 'fail://test',
+            '--format' => 'csv'
+        ]);
+
+        stream_wrapper_unregister('fail');
+
+        $this->assertNotSame(0, $commandTester->getStatusCode());
+        $this->assertStringContainsString('Failed to read file', $commandTester->getDisplay());
+    }
+
     public function testExecuteSuccessfullyStartsInteractiveMode(): void
     {
         $data = "name,age\nAlice,30\nBob,25";
