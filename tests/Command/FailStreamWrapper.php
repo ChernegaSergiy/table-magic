@@ -4,6 +4,8 @@ namespace Tests\Command;
 
 class FailStreamWrapper
 {
+    public $context;
+
     public function stream_open($path, $mode, $options, &$opened_path)
     {
         return false;
