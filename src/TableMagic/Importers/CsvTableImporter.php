@@ -16,13 +16,13 @@ class CsvTableImporter implements TableImporterInterface
     public function import(string $data) : Table
     {
         $lines = explode("\n", trim($data));
-        $raw_headers = str_getcsv((string) array_shift($lines));
+        $raw_headers = str_getcsv((string) array_shift($lines), ',', '"', '\\');
         $headers = array_map(fn ($header) => $header ?? '', $raw_headers);
         $table = new Table($headers);
 
         foreach ($lines as $line) {
             if (! empty(trim($line))) {
-                $row = str_getcsv($line);
+                $row = str_getcsv($line, ',', '"', '\\');
                 $table->addRow(array_map(fn ($cell) => $cell ?? '', $row));
             }
         }

@@ -21,9 +21,9 @@ class CsvTableExporter implements TableExporterInterface
         if (false === $output) {
             throw new Exception('Failed to open temporary stream');
         }
-        fputcsv($output, $table->headers);
+        fputcsv($output, $table->headers, ',', '"', '\\');
         foreach ($table->getRows() as $row) {
-            fputcsv($output, $row);
+            fputcsv($output, $row, ',', '"', '\\');
         }
         rewind($output);
         $csv_data = stream_get_contents($output);
