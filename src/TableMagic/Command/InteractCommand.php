@@ -67,7 +67,10 @@ class InteractCommand extends Command
 
             $output->writeln("<info>Starting interactive mode for {$file}...</info>");
 
-            $interaction = new TerminalInteraction($table, $rows_per_page);
+            $inputStream = $input->getStream() ?: STDIN;
+            $outputStream = $output instanceof \Symfony\Component\Console\Output\StreamOutput ? $output->getStream() : STDOUT;
+
+            $interaction = new TerminalInteraction($table, $rows_per_page, $inputStream, $outputStream);
             $interaction->run();
 
             $output->writeln("\n<info>Interactive mode exited.</info>");
