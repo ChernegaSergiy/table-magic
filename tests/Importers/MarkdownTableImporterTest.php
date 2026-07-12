@@ -23,4 +23,21 @@ MARKDOWN;
         $this->assertEquals(['l', 'c', 'r'], $table->getAlignments());
         $this->assertEquals([['Alice', '30', 'New York'], ['Bob', '25', 'London']], $table->getRows());
     }
+
+    public function testImportWithExtraAlignmentColumn()
+    {
+        $markdown = <<<MARKDOWN
+| Name | Age |
+|:---|:---:|---:|
+| Alice | 30 |
+| Bob | 25 |
+MARKDOWN;
+
+        $importer = new MarkdownTableImporter();
+        $table = $importer->import($markdown);
+
+        $this->assertEquals(['Name', 'Age'], $table->headers);
+        $this->assertEquals(['l', 'c'], $table->getAlignments());
+        $this->assertEquals([['Alice', '30'], ['Bob', '25']], $table->getRows());
+    }
 }
