@@ -265,7 +265,6 @@ class TableTest extends TestCase
         // Access private property using reflection for testing
         $reflection = new \ReflectionClass($table);
         $alignments_property = $reflection->getProperty('alignments');
-        $alignments_property->setAccessible(true);
         $alignments = $alignments_property->getValue($table);
 
         // Expect the last column's alignment to be set to 'c'

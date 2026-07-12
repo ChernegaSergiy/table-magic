@@ -78,7 +78,6 @@ class TerminalInteractionTest extends TestCase
         // Access private method using reflection for testing
         $reflection = new \ReflectionClass($interaction);
         $method = $reflection->getMethod('displayCurrentPage');
-        $method->setAccessible(true);
 
         $method->invoke($interaction);
 
@@ -153,7 +152,6 @@ class TerminalInteractionTest extends TestCase
         // Access private method using reflection for testing
         $reflection = new \ReflectionClass($interaction);
         $method = $reflection->getMethod('getTotalPages');
-        $method->setAccessible(true);
 
         $this->assertEquals(2, $method->invoke($interaction));
 
@@ -354,7 +352,6 @@ class TerminalInteractionTest extends TestCase
         // Call editRow directly using reflection
         $reflection = new \ReflectionClass($interaction);
         $method = $reflection->getMethod('editRow');
-        $method->setAccessible(true);
 
         $method->invoke($interaction);
 
