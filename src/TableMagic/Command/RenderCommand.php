@@ -45,7 +45,7 @@ class RenderCommand extends Command
             }
         }
 
-        $data = file_get_contents($file);
+        $data = @file_get_contents($file);
         if (false === $data) {
             $output->writeln("<error>Failed to read file: {$file}</error>");
             return Command::FAILURE;
