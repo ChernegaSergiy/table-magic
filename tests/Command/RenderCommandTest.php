@@ -41,6 +41,35 @@ class RenderCommandTest extends TestCase
         $this->assertStringContainsString('30', $output);
     }
 
+    public function testExecuteFailsIfFileArgumentIsNotString(): void
+    {
+        $command = new RenderCommand();
+        $commandTester = new CommandTester($command);
+        $commandTester->execute([
+            'file' => ['array_value']
+        ]);
+
+        $this->assertNotSame(0, $commandTester->getStatusCode());
+        $this->assertStringContainsString('Invalid file argument', $commandTester->getDisplay());
+    }
+
+    public function testExecuteFailsIfFileCannotBeRead(): void
+    {
+        stream_wrapper_register('fail2', FailStreamWrapper::class);
+
+        $command = new RenderCommand();
+        $commandTester = new CommandTester($command);
+        $commandTester->execute([
+            'file' => 'fail2://test',
+            '--format' => 'csv'
+        ]);
+
+        stream_wrapper_unregister('fail2');
+
+        $this->assertNotSame(0, $commandTester->getStatusCode());
+        $this->assertStringContainsString('Failed to read file', $commandTester->getDisplay());
+    }
+
     public function testExecuteFailsIfFileNotFound(): void
     {
         $command = new RenderCommand();
