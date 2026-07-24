@@ -126,11 +126,11 @@ Sorted by Performance Score (Descending):
 
 ## Table Styling
 
-table-magic offers extensive customization options for table appearance through its styling system. You can apply various predefined styles or define your own custom styles to match your application's aesthetic.
+The library offers extensive customization options for its appearance through a flexible styling system. You can apply various predefined styles or define your own custom ones to match your application's aesthetic.
 
 ### Predefined Styles
 
-table-magic comes with several built-in styles, including: `default`, `compact`, `dots`, `rounded`, `unicode-single-line`, `unicode-double-line`, `github-markdown`, `reddit-markdown`, `restructured-text-grid`, and `restructured-text-simple`.
+It comes with several built-in styles, including: `default`, `compact`, `dots`, `rounded`, `unicode-single-line`, `unicode-double-line`, `github-markdown`, `reddit-markdown`, `restructured-text-grid`, and `restructured-text-simple`.
 
 Here's an example demonstrating some of these styles, along with a custom one:
 
