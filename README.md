@@ -1,8 +1,8 @@
 <div align="center">
 
-<img src="public/logo-squircle.svg" alt="TableMagic" width="160" height="160" />
+<img src="public/logo-squircle.svg" alt="table-magic" width="160" height="160" />
 
-# TableMagic
+# table-magic
 
 *A powerful and flexible PHP library for creating and manipulating tables in console output.*
 
@@ -19,7 +19,7 @@
 
 </div>
 
-**TableMagic** is a powerful and flexible PHP library designed for creating and manipulating tables in console output. Inspired by Python's PrettyTable, TableMagic empowers developers to effortlessly display tabular data with customizable alignment, sorting, and styling options.
+**table-magic** is a powerful and flexible PHP library designed for creating and manipulating tables in console output. Inspired by Python's PrettyTable, table-magic empowers developers to effortlessly display tabular data with customizable alignment, sorting, and styling options.
 
 ## Features
 
@@ -34,11 +34,11 @@
 
 ## Repository Structure
 
-Here is the updated structure of the core `src/TableMagic` directory:
+Here is the updated structure of the core `src/` directory:
 
 ```
 src/
-\-- TableMagic/
+\-- /
     +-- Table.php
     +-- TableExporter.php
     +-- TableImporter.php
@@ -63,7 +63,7 @@ src/
 
 ## Installation
 
-You can install TableMagic using Composer:
+You can install  using Composer:
 
 ```bash
 composer require chernegasergiy/table-magic
@@ -71,7 +71,7 @@ composer require chernegasergiy/table-magic
 
 ## Usage
 
-Here's a quick example to get you started with TableMagic:
+Here's a quick example to get you started with :
 
 ```php
 require_once 'vendor/autoload.php';
@@ -126,11 +126,11 @@ Sorted by Performance Score (Descending):
 
 ## Table Styling
 
-TableMagic offers extensive customization options for table appearance through its styling system. You can apply various predefined styles or define your own custom styles to match your application's aesthetic.
+table-magic offers extensive customization options for table appearance through its styling system. You can apply various predefined styles or define your own custom styles to match your application's aesthetic.
 
 ### Predefined Styles
 
-TableMagic comes with several built-in styles, including: `default`, `compact`, `dots`, `rounded`, `unicode-single-line`, `unicode-double-line`, `github-markdown`, `reddit-markdown`, `restructured-text-grid`, and `restructured-text-simple`.
+table-magic comes with several built-in styles, including: `default`, `compact`, `dots`, `rounded`, `unicode-single-line`, `unicode-double-line`, `github-markdown`, `reddit-markdown`, `restructured-text-grid`, and `restructured-text-simple`.
 
 Here's an example demonstrating some of these styles, along with a custom one:
 
@@ -270,7 +270,7 @@ $direct_html_output = $html_exporter->export($table_to_export);
 For large datasets, you can interactively paginate through the table:
 
 ```php
-use ChernegaSergiy\TableMagic\TerminalInteraction;
+use ChernegaSergiy\table-magic\TerminalInteraction;
 
 $terminal_interaction = new TerminalInteraction($table);
 $terminal_interaction->run();
