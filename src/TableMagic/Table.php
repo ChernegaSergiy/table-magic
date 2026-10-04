@@ -367,7 +367,7 @@ class Table
     /**
      * Updates a specific row in the table.
      *
-     * @param  int                       $index  The index of the row to update.
+     * @param  int                       $index   The index of the row to update.
      * @param  array<int|string, string> $new_row The new data for the row.
      * @throws Exception                 If the row index is invalid.
      */

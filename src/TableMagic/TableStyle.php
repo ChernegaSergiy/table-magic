@@ -48,7 +48,7 @@ class TableStyle
     ) {
         $this->vertical = $vertical;
 
-        $this->has_top_border = !empty($top);
+        $this->has_top_border = ! empty($top);
         $this->top_left = $top[0] ?? '';
         $this->top_horizontal = $top[1] ?? '';
         $this->top_intersection = $top[2] ?? '';
@@ -57,13 +57,13 @@ class TableStyle
         // Header separator is mandatory
         [$this->header_left, $this->header_horizontal, $this->header_intersection, $this->header_right] = $header;
 
-        $this->has_row_separator = !empty($row);
+        $this->has_row_separator = ! empty($row);
         $this->row_left = $row[0] ?? '';
         $this->row_horizontal = $row[1] ?? '';
         $this->row_intersection = $row[2] ?? '';
         $this->row_right = $row[3] ?? '';
 
-        $this->has_bottom_border = !empty($bottom);
+        $this->has_bottom_border = ! empty($bottom);
         $this->bottom_left = $bottom[0] ?? '';
         $this->bottom_horizontal = $bottom[1] ?? '';
         $this->bottom_intersection = $bottom[2] ?? '';

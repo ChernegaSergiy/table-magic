@@ -105,7 +105,7 @@ class TableStyleRegistry
     {
         self::init();
 
-        if (!isset(self::$styles[$name])) {
+        if (! isset(self::$styles[$name])) {
             throw new InvalidArgumentException(sprintf('Style "%s" is not registered.', $name));
         }
 
