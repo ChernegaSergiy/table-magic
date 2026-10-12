@@ -270,7 +270,7 @@ $direct_html_output = $html_exporter->export($table_to_export);
 For large datasets, you can interactively paginate through the table:
 
 ```php
-use ChernegaSergiy\table-magic\TerminalInteraction;
+use ChernegaSergiy\TableMagic\TerminalInteraction;
 
 $terminal_interaction = new TerminalInteraction($table);
 $terminal_interaction->run();
