@@ -276,7 +276,11 @@ $terminal_interaction = new TerminalInteraction($table);
 $terminal_interaction->run();
 ```
 
-An example script demonstrating terminal interaction is available at `examples/run_terminal_interaction.php`.
+An example script demonstrating interactive navigation and editing is available at [`examples/interactive_terminal_demo.php`](examples/interactive_terminal_demo.php):
+
+```bash
+php examples/interactive_terminal_demo.php
+```
 
 ## Contributing
 
