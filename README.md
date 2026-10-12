@@ -267,7 +267,7 @@ $direct_html_output = $html_exporter->export($table_to_export);
 
 ### Terminal Interaction
 
-For large datasets, you can interactively paginate through the table:
+For large datasets, you can interactively paginate, sort, and modify tables directly in the console:
 
 ```php
 use ChernegaSergiy\TableMagic\TerminalInteraction;
