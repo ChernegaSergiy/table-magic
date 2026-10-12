@@ -63,14 +63,17 @@ class XmlTableExporter implements TableExporterInterface
     }
 
     /**
-     * @return SimpleXMLElement|false
+     * @return SimpleXMLElement|false|null
      */
-    protected function addChildToElement(SimpleXMLElement $element, string $name, ?string $value = null) : SimpleXMLElement|false|null
+    protected function addChildToElement(SimpleXMLElement $element, string $name, ?string $value = null)
     {
         return $element->addChild($name, $value);
     }
 
-    protected function convertXmlToString(SimpleXMLElement $element) : string|false
+    /**
+     * @return string|false
+     */
+    protected function convertXmlToString(SimpleXMLElement $element)
     {
         return $element->asXML();
     }
