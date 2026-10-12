@@ -282,6 +282,8 @@ An example script demonstrating interactive navigation and editing is available 
 php examples/interactive_terminal_demo.php
 ```
 
+![Interactive Terminal Demo](docs/demo/interactive.gif)
+
 ## Contributing
 
 Contributions are welcome and appreciated! Here's how you can contribute:
